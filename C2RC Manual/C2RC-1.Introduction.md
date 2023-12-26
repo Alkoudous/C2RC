@@ -60,6 +60,7 @@ Figure 1 shows C2RC home page which introduces key concepts, describes its goals
 
 
 ![C2RC-Home](images/C2RC-Home-Page.png)
+
 *Fig 1: C2RC Home Page*
 
 <strong style="color:brown"> NEXT : </strong> To start using the C2RC, click on the <strong style="color:green"> **Dataset** </strong> menu button to create one or more datasets where evaluation results of a specific BurgerLinker graph can be saved and used as a base for corrections or validations of a reconstitution. 
