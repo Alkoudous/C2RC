@@ -1,0 +1,541 @@
+<!-- TEMPLATE -3 : Run Batch -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <!-- TITLE: C2RC SELECTED DATABASE Amsterdam -->
+    <div class="row text-end" style="padding-top:1rem;">
+
+        <!-- C2RC -->
+        <div class="col-auto ">
+            <h1 style="text-align: center; color: #C4A484; padding-bottom:1rem;
+                font-family:Audiowide, Fantasy; font-weight:bold;">
+                <a class="navbar-brand" href="{{ url_for('index')}}" style=";"> C2RC </a>
+            </h1>
+        </div>
+
+        <!-- SELECTED DB TEXT -->
+        <div class=" input-group col-auto text-end justify-content-end align-bottom"
+             style="width:72%; padding-top:0.5rem; text-align:right;">
+
+                <h3 style="color: #C4A484; padding-bottom:1rem;
+                    font-family:Audiowide, Fantasy; font-weight: bold;">
+                        SELECTED DATABASE &nbsp;
+                </h3>
+
+        </div>
+
+        <!-- SELECTED DB NAME BADGE -->
+        <div class=" input-group col-auto text-end justify-content-end align-bottom"
+             style="width:15.2%; padding-top:0.3rem; text-align:right;">
+
+                <h3 style="color: #C4A484; padding-bottom:1rem; font-family:Audiowide, Fantasy; font-weight: bold;">
+                    <span class="badge rounded-pill text-bg-info" style="padding-left:2rem; padding-right:2rem;
+                    padding-bottom:0.5rem; padding-top:0.5rem; font-family:Helvetica, 'Brush Script', Fantasy">
+                        {%if response['db']|length > 0 %} {{ response['selected_db_name'] }} {%else%} None {%endif%}
+                    </span>
+                </h3>
+
+        </div>
+
+    </div>
+
+
+    <!-- CARD-1 ONLY HEADER -->
+    <div class="card">
+
+        <!-- CARD HEADER -->
+        <div class="card-header" style=" padding-bottom:2rem;">
+
+            <!-- SUBMITTING A SIZE OR SIZE RANGE FOR PROCESSING -->
+            <div class="row" style="padding-left: 14px; padding-right:2rem;">
+
+                <div class="column" >
+                    <form class="row g-3"  action="runners" method="POST">
+
+                    <!--  HEADER TEXT  -->
+                    <DIV style="width:70%">
+                        <h2><a class="nav-link " style="padding-top: 0.8rem">
+                          Evaluate reconstitutions</a></h2>
+                    </DIV>
+
+                    <!--  HEADER BUTTON  -->
+                    <DIV style="width:30%; padding-top: 1.5rem;">
+
+                        <div class="input-group input-group-sm mb-3">
+
+                            <!--  SIZE TEXT -->
+                            <span class="input-group-text inputGroup-sizing-sm" id="inputGroup-sizing-sm">
+                              Size
+                            </span>
+
+                            <!--  SIZE FIELD  -->
+                            <input
+                                id="sizes" name="sizes"
+                                style="text-align: center;"
+                                type="text" class="form-control"
+                                aria-label="Sizing example input"
+                                aria-describedby="inputGroup-sizing-sm"
+                                value=""
+                            >
+
+                            <!--  SELECTED SIZE INPUT  -->
+                            <input
+                                id="submitted-size-cs" name="submitted-size-cs"
+                                style="text-align: center;" type="text" class="form-control"
+                                aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm"
+                                value="{{ selected_size }}" hidden="hidden"
+                            >
+
+                            <input
+                                id="table-limit-cs" name="table-limit-cs" placeholder="50"
+                                style="text-align: center;" type="text" class="form-control"
+                                aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm"
+                                value="{{ limit }}" hidden="hidden"
+                            >
+
+                            <!--  SUBMIT BUTTON  -->
+                            <button onclick="clearBox('div_run', '')" class="btn btn-primary" type="submit" >
+                                Submit
+                            </button>
+
+                        </div>
+
+                    </DIV>
+
+                    </form>
+                </div>
+            </div>
+
+            <!-- PROCESSED SIZES -->
+            <div class="row" style="padding-left: 14px; padding-left:1.5rem; padding-right:2.7rem;">
+
+                <span class="badge text-bg-secondary rounded-pill text-align-middle"
+                    style="padding-top:0.5rem; padding-bottom:0rem; padding-right:1rem; text-align:right">
+                     <h6>
+                         Available sizes :  {{ list_summary }}
+                     </h6>
+                </span>
+
+            </div>
+
+        </div>
+
+        <!-- CARD BODY -->
+        <div class="card-body border-info">
+
+            <!-- REQUEST OPTIONS DESCRIPTION -->
+            <p></p>
+            <div class="alert alert-dark align-items-center alert-dismissible fade show" role="alert">
+
+                <div>
+                    <strong>REQUEST OPTIONS</strong>
+                </div>
+
+                <P></P>
+
+                <!-- OPTION LIST -->
+                <ul>
+                    <li>
+                        <p class="card-text">If the size is set to <strong>3</strong>, all
+                          reconstitutions of size <strong>3</strong> will be evaluated.</p>
+                    </li>
+
+                    <li>
+                        <p class="card-text">If the size is set to <strong>3 5</strong>,
+                          all reconstitutions of size <strong>3 and 5</strong> will be evaluated.</p>
+                    </li>
+
+                    <li>
+                        <p class="card-text">If the size is set to <strong>3-5</strong>,
+                          all reconstitutions <strong>from size 3 to 5</strong> will be evaluated.</p>
+                    </li>
+
+                    <li>
+                        <p class="card-text">If the size is set to <strong>3-5 10 20-25</strong>,
+                          all reconstitutions <strong>from size 3 to 5, size 10 and sizes 20 to 25 </strong>
+                          will be evaluated.</p>
+                    </li>
+                </ul>
+
+
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            {% if requested_sizes|length %}
+            Executed submitted request of size {{ requested_sizes }}
+            {% endif %}
+
+            <!-- TABLE OF SIZES PROCESSED -->
+            <p></p>
+            <div class="card border-info">
+
+                <div class="input-group text-end input-group-sm mb-3 justify-content-center"
+                     style="padding-left:2px; padding-right:2rem; padding-bottom:0rem; padding-top:2rem;">
+
+                    <!-- SUBMITTING A SIZE TO DISPLAY IN THE TABLE-->
+                    <form class="COL g-3"  action="run" method="POST">
+
+                        <div class="input-group input-group-sm mb-3">
+
+                            <!-- CLUSTER SIZE  INPUT BOX -->
+                            <span class="input-group-text inputGroup-sizing-sm likely" id="size-label"
+                                style="padding-top:0.7rem; padding-bottom:0.8rem; height:3rem;">
+
+                                <strong style="width:4rem">  Size </strong>
+
+                                <!-- SELECTED SIZE -->
+                                <input
+                                id="submitted-size" name="submitted-size"
+                                style="text-align: center; width:5rem; form-control-sm"
+                                type="text" class="form-control form-control-sm"
+                                aria-label="Sizing example input"
+                                aria-describedby="inputGroup-sizing-sm"
+                                value="{{ selected_size }}"
+                            >
+                            </span>
+
+                            <!-- TABLE LIMIT INPUT BOX-->
+                            <span class="input-group-text inputGroup-sizing-sm likely" id="limit-label"
+                                style="padding-top:0.7rem; padding-bottom:0.8rem; height:3rem;">
+                                <strong style="width:7rem">  Table Limit </strong>
+
+                                <!-- LIMIT -->
+                                <input
+                                    id="table-limit" name="table-limit" placeholder="50"
+                                    style="text-align: center; center; width:5rem;" type="text"
+                                    class="form-control form-control-sm"
+                                    aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm"
+                                    value="{{ limit }}"
+                                >
+                            </span>
+
+                            <!-- SUBMIT BUTTON -->
+                            <button class="btn btn-primary border-light btn-light align-top" type="submit"
+                                STYLE="PADDING-TOP:0.5REM; background-color:white;">
+                                    <h5>
+                                        <span aria-hidden="true" class="badge rounded-pill text-bg-primary"
+                                             style="padding-right:1.5rem; padding-left:1.5rem;
+                                             padding-top:0.5rem; padding-BOTTOM:0.6rem;">
+                                           Submit a size and limit
+                                        </span>
+                                    </h5>
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                    <!-- RUN PREVIOUS SIZE FORM -->
+                    <form class="COL g-3"  action="run_previous" method="POST">
+
+                        <input
+                            id="submitted_previous_size" name="submitted_previous_size"
+                            style="text-align: center; width:3rem" type="text" class="form-control"
+                            aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm"
+                            value="{{ previous_size }}" hidden="">
+
+                        <input
+                            id="table-limit-p" name="table-limit-p" placeholder="50"
+                            style="text-align: center;" type="text" class="form-control"
+                            aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm"
+                            value="{{ limit }}" hidden="hidden"
+                        >
+
+                        <input
+                            id="submitted-size-p" name="submitted-size-p"
+                            style="text-align: center;" type="text" class="form-control"
+                            aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm"
+                            value="{{ selected_size }}" hidden="hidden"
+                        >
+
+                        <button class="btn btn-primary border-light btn-light align-top" type="submit"
+                            STYLE="PADDING-TOP:0.5REM; PADDING-bottom:1.2REM; background-color:white;">
+                                <h5>
+                                    <span aria-hidden="true" class="badge rounded-pill text-bg-primary"
+                                         style="padding-right:1.5rem; padding-left:1.5rem; width:6rem;
+                                         padding-top:0.5rem; padding-BOTTOM:0.6rem;">
+                                       &laquo;
+                                    </span>
+                                </h5>
+                        </button>
+                    </form>
+
+                    &nbsp; &nbsp;
+                    <!-- BADGE FOR TABLE TOTAL -->
+                    <div style="padding-top:0.5rem">
+                        <h5>
+                            <span class="badge rounded-pill text-bg-dark align-bottom"
+                                  style="padding-left:1.5rem; padding-right:1.5rem;
+                                    padding-top:0.6rem; padding-bottom:1.5rem; height:0.8rem;">
+                               {{ table_size }} reconstitutions of size {{ selected_size }}
+                            </span>
+                        </h5>
+                    </div>
+                    &nbsp; &nbsp;
+
+                    <!-- RUN NEXT SIZE FORM -->
+                    <form class="row g-3"  action="run_next" method="POST">
+                        <input
+                            id="submitted_size" name="submitted_size"
+                            style="text-align: center; width:3rem" type="text" class="form-control"
+                            aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm"
+                            value="{{ next_size }}" hidden=""
+                        >
+                        <input
+                            id="submitted-size-n" name="submitted-size-n"
+                            style="text-align: center;" type="text" class="form-control"
+                            aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm"
+                            value="{{ selected_size }}" hidden="hidden"
+                        >
+                        <input
+                            id="table-limit-n" name="table-limit-n" placeholder="50"
+                            style="text-align: center;" type="text" class="form-control"
+                            aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm"
+                            value="{{ limit }}" hidden="hidden"
+                        >
+
+                        </button>
+                        <button class="btn btn-primary border-light btn-light align-top" type="submit"
+                            STYLE="PADDING-TOP:0.5REM; PADDING-bottom:1.2REM; width:5rem; background-color:white;">
+                                <h5>
+                                    <span aria-hidden="true" class="badge rounded-pill text-bg-primary"
+                                         style="padding-right:1.5rem; padding-left:1.5rem;
+                                         padding-top:0.5rem; padding-BOTTOM:0.6rem; width:6rem;">
+                                        &raquo;
+                                    </span>
+                                </h5>
+                        </button>
+                    </form>
+
+                </div>
+
+                <!-- EVALUATED SIZES -->
+                <div style="text-align: center; overflow:auto; padding-top:0rem">
+
+                    <div class="row"
+                         style="padding-left: 14px; padding-left:1.5rem; padding-right:2.7rem; padding-bottom:0rem;">
+
+                        <!-- EVALUATED SIZES BADGE -->
+                        <h5>
+                            <span class="badge rounded-pill text-bg-secondary"
+                                  style="padding-left:1rem; padding-right:1rem; padding-top:1rem;
+                                  padding-bottom:1rem; width:91%">
+                                Processed Sizes {{ processed_sizes }}
+                            </span>
+                        </h5>
+
+                        <!--  TABLE -->
+                        <pre>{{ table }}</pre>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- CARD-2 STATISTICS TABLE -->
+    <p></p>
+    <div class="card">
+
+        <!--    HEADER    -->
+        <div class="card-header">
+            <h2>
+                <a class="nav-link " style="padding-top: 0.8rem"> Stats Overview </a>
+            </h2>
+        </div>
+
+        <!--     BODY     -->
+        <div class="card-body">
+
+            <!-- 2. FLAG STATS -->
+            <div class="card border-info">
+                <div class="card-body" style="padding-left:2rem; padding-right:2rem;">
+
+                    <!-- HEADER -->
+                    <div class="row" style="text-align:justify; padding-top:0rem; padding-bottom:0rem;">
+
+                        <!-- CURRENT STATS -->
+                        <div class="col">
+                            <span aria-hidden="true" class="badge rounded-pill text-bg-light align-middle"
+                                    style="padding-left:1rem; padding-right:1rem; width:17rem">
+                            </span>
+                        </div>
+
+                        <!-- LIKELY-S -->
+                        <div class="col" style="text-align:right; width:11rem">
+                            <span class="badge rounded-pill text-bg-light" style="width:11rem; font-size:1rem; background:white; color:black;">
+                                WITHOUT WARNING
+                            </span>
+                         </div>
+
+                        <!-- LIKELY -->
+                        <div class="col" style="text-align:right;">
+                            <span class="badge rounded-pill text-bg-light" style="width:11rem; font-size:1rem; background:white; color:black;">
+                                WITH WARNING
+                            </span>
+                        </div>
+
+                        <!-- UNCERTAIN -->
+                        <div class="col" style="text-align:right;">
+                            <span class="badge rounded-pill text-bg-light" style="width:11rem; font-size:1rem; background:white; color:black;">
+                                UNCERTAIN
+                            </span>
+                        </div>
+
+                        <!-- UNLIKELY -->
+                        <div class="col" style="text-align:right;">
+                            <span class="badge rounded-pill " style="width:11rem; font-size:1rem; background:white; color:black;">
+                                UNLIKELY
+                            </span>
+                        </div>
+
+                    </div>
+
+                    <hr>
+
+                    <!-- OVERALL STATS -->
+                    <div class="row " style="text-align:justify; padding-top:0rem; padding-bottom:0rem;">
+
+                        <!-- OVERALL STATS  -->
+                        <div class="col">
+                              <span aria-hidden="true" class="badge rounded-pill text-bg-secondary align-middle"
+                                  style="padding-left:0.6rem; padding-right:0.6rem; width:17rem">
+                                  OVERALL : {{overall_stats['full_size']}}
+                            </span>
+                        </div>
+
+                        <!-- LIKELY-S -->
+                        <div class="col" style="text-align:right;">
+                            <span aria-hidden="true" class="badge rounded-pill align-middle likely"
+                                  style="width:11rem">
+                                 {{ overall_stats['percentage_likely_s'] }}%
+                            </span>
+                        </div>
+
+                        <!-- LIKELY -->
+                        <div class="col" style="text-align:right;">
+                            <span aria-hidden="true" class="badge rounded-pill align-middle likely" style="width:11rem">
+                                 {{ overall_stats['percentage_likely'] }}%
+                            </span>
+                        </div>
+
+                        <!-- UNCERTAIN -->
+                        <div class="col" style="text-align:right;">
+                             <span aria-hidden="true" class="badge rounded-pill align-middle uncertain" style="width:11rem">
+                                 {{ overall_stats['percentage_uncertain'] }}%
+                            </span>
+                        </div>
+
+                        <!-- UNLIKELY -->
+                        <div class="col" style="text-align:right;">
+                             <span aria-hidden="true" class="badge rounded-pill align-middle unlikely" style="width:11rem">
+                                 {{ overall_stats['percentage_unlikely'] }}%
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- STATS TABLE -->
+            <p style="padding:0.5rem"></p>
+            <div class="container border-info" style="">
+
+                <form action="run_Analysis" method="POST">
+                    <table class="table table-sm caption-top table-hover align-middle"
+                       style="font-size:14px; text-align:center; position:fixed-top;">
+
+                        <!-- RECONSTITUTED TABLE HEADER -->
+                        <thead class="table-success align-text-center align-middle"
+                               style="font-size:16px; position: -webkit-sticky; position: sticky; top: 0; z-index: 2;">
+
+                            <!-- TABLE HEADER -->
+                            <tr>
+                                <th scope="col"> </th>
+                                <th scope="col"> Size </th>
+                                <th scope="col">Total</th>
+                                <th scope="col">Likely without warning (%)</th>
+                                <th scope="col">Likely with warning (%)</th>
+                                <th scope="col">Uncertain (%)</th>
+                                <th scope="col">Unlikely (%)</th>
+                            </tr>
+
+                        </thead>
+
+                        <!-- TABLE BODY  -->
+                        <tbody class="table-group-divider">
+
+                            <!-- EMPTY ROW -->
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+
+                            {% if stats %}
+                            {% for row in stats %}
+
+                                <tr style="padding-bottom:0rem; padding-top:0rem; height:1rem"
+                                    class="align-middle table-secondary"
+                                    onmouseout="ChangeColor(this, false);" onclick="ChangeColor(this, true);">
+
+                                        <th scope="row" style="">{{loop.index}}</th>
+                                        <td>
+                                            <button type="submit" class="btn btn-outline-primary btn-sm"
+                                                    value="{{ row['c_size'] }}" name="CLUSTER_SIZE"
+                                                    style="width:5rem; height:1.5rem; padding-top:0rem; padding-bottom:0rem">
+                                                {{ row['c_size'] }}
+                                            </button>
+                                        </td>
+                                        <td>{{ row['total'] }}</td>
+                                        <td>{{ row['likelyWithoutWarning'] }}</td>
+                                        <td>{{ row['likelyWithWarning'] }}</td>
+                                        <td>{{ row['uncertain'] }}</td>
+
+                                        {% if row['unlikely'] > above %}
+                                            <td style="color:red; font-size:1rem">{{ row['unlikely'] }}</td>
+                                        {% else %}
+                                            <td>{{ row['unlikely'] }}</td>
+                                        {% endif %}
+                                </tr>
+
+                            {% endfor %}
+                            {% endif %}
+
+                        </tbody>
+
+                    </table>
+                </form>
+            </div>
+
+        </div>
+
+    </div>
+
+    <p style="padding-top:5rem; text-align: justify;"> </p>
+
+{% endblock %}
+
+
+
+<!--script-->
+<script>
+    function clearBox(elementID, link) {
+        document.getElementById(elementID).innerHTML = "    PROCESSING " + link + " ...";
+        document.getElementById(link).color = "green";
+    }
+</script>

@@ -1,0 +1,417 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <!--TITLE -->
+    <div class="row text-end" style="padding-top:1rem;">
+
+        <div class="col-auto ">
+            <h1 style="text-align: center; color: #C4A484; padding-bottom:1rem;
+                font-family:Audiowide, Fantasy; font-weight:bold;">
+                <a class="navbar-brand" href="{{ url_for('index')}}" style=";"> C2RC </a>
+            </h1>
+        </div>
+
+        <div class=" input-group col-auto text-end justify-content-end align-bottom"
+             style="width:72%; padding-top:0.5rem; text-align:right;">
+
+                <h3 style="color: #C4A484; padding-bottom:1rem;
+                    font-family:Audiowide, Fantasy; font-weight: bold;">
+                        SELECTED DATABASE &nbsp;
+                </h3>
+
+        </div>
+
+        <div class=" input-group col-auto text-end justify-content-end align-bottom"
+             style="width:15.2%; padding-top:0.3rem; text-align:right;">
+
+                <h3 style="color: #C4A484; padding-bottom:1rem; font-family:Audiowide, Fantasy; font-weight: bold;">
+                        <span class="badge rounded-pill text-bg-info" style="padding-left:2rem; padding-right:2rem;
+                        padding-bottom:0.5rem; padding-top:0.5rem; font-family:Helvetica, 'Brush Script', Fantasy">
+                            {%if response['db']|length > 0 %} {{ response['selected_db_name'] }} {%else%} None {%endif%}
+                        </span>
+                </h3>
+
+
+        </div>
+
+    </div>
+
+
+    <!-- AUTOMATED VALIDATIONS -->
+    <div class="card" style="">
+        <!--<img src="/static/images/result.png" class="card-img-top" alt="...">-->
+
+        <!-- CARD HEADER -->
+        <div class="card-header">
+            <h2 class="card-title">Export Automated Validations</h2>
+        </div>
+
+        <!-- Automated Validations CARD BODY -->
+        <div class="card-body text-center">
+
+            <!-- FIRST ROW -->
+            <div class="row">
+
+                <!-- ROW 1 COL 1-->
+                <div class="col-sm-6 mb-3 mb-sm-0">
+                    <div class="card mb-3 h-100">
+
+                        <!-- SINGLE RECONSTITUTION EXPORT LABEL -->
+                        <div class="card-header">
+                            <h5 class="card-title">Export a processed reconstitution of choice</h5>
+                        </div>
+
+                        <div class="card-body">
+
+                            <!-- PROCESSED SIZE LIST BADGE -->
+                            <div class="col-auto">
+                                <h5>
+                                    <span class="badge  text-bg-light">
+                                        {% if response['processed_sizes']%}
+                                            Processed Sizes: {{ response['processed_sizes'] }}
+                                        {% else %}
+                                            No processed size exits.
+                                        {% endif %}
+                                    </span>
+                                </h5>
+                            </div>
+
+                            <form class="row g-3"  action="export_automated_validation_group" method="POST">
+
+                                <!-- INPUT GROUP FOR THE CURRENT RECONSTITUTION'S SIZE-->
+                                <div class="input-group" style="padding-top:0rem">
+                                    <span class="input-group-text" id="export-single-rec-span">
+                                        Submit a reconstitution size for exporting
+                                    </span>
+                                    <input type="text" class="form-control" id="export-single-rec-input"
+                                           style="text-align:center;" aria-describedby="basic-addon3 basic-addon4"
+                                           name="c_size" value="{{response['c_size']}}">
+                                </div>
+
+                                <!-- EXPORT BUTTON FOR A SINGLE RECONSTITUTION -->
+                                {% if response['processed_reconstitutions_all'] == 0 %}
+                                    <button class="btn btn-primary border-light btn-light" type="submit"
+                                        style=" height:1rem; padding-top:0rem; padding-right:0.9rem;
+                                        padding-bottom:1rem; background-color:white;" disabled>
+                                        <span aria-hidden="true" class="badge rounded-pill text-bg-primary"
+                                            style="padding-bottom:0.5rem; padding-top:0.5rem; width:70%;">
+                                            Export &nbsp;
+                                            <span aria-hidden="true" class="badge rounded-pill text-bg-danger"
+                                                  style="padding-left:1rem; padding-right:1rem;">
+                                                1
+                                            </span>
+                                            &nbsp; automated validation size of choice
+                                        </span>
+                                    </button>
+                                {% else %}
+                                    <button class="btn btn-primary border-light btn-light" type="submit"
+                                        style=" height:1rem; padding-top:0rem; padding-right:0.9rem;
+                                        padding-bottom:1rem; background-color:white;">
+                                        <span aria-hidden="true" class="badge rounded-pill text-bg-primary"
+                                            style="padding-bottom:0.5rem; padding-top:0.5rem; width:70%;">
+                                            Export &nbsp;
+                                            <span aria-hidden="true" class="badge rounded-pill text-bg-danger"
+                                                  style="padding-left:1rem; padding-right:1rem;">
+                                                1
+                                            </span>
+                                            &nbsp; automated validation size of choice
+                                        </span>
+                                    </button>
+                                {% endif %}
+
+                            </form>
+
+                            {% if error %}
+                            <p style="padding-top:1rem; padding-bottom:0rem">
+                            <span aria-hidden="true" class="badge rounded-pill text-bg-danger"
+                                  style="padding-left:1rem; padding-right:1rem;">
+                                {{ error }}
+                                <span aria-hidden="true" class="badge rounded-pill text-bg-dark"
+                                      style="padding-left:1rem; padding-right:1rem;">
+                                    {{response['c_size']}}
+                                </span>
+                            </span>
+                            </p>
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- ROW 1 COL 2-->
+                <div class="col-sm-6 ">
+                    <div class="card mb-3 h-100">
+
+                        <!-- LABEL -->
+                        <div class="card-header">
+                            <h5 class="card-title">Export all processed reconstitutions</h5>
+                        </div>
+
+                        <!-- CARD BODY -->
+                        <div class="card-body text-center">
+
+                            <p style="padding:1.3rem"></p>
+                            <!-- PROCESSED SIZE LIST BADGE -->
+                            <div class="col-auto">
+                                <h5>
+                                    <span class="badge  text-bg-light">
+                                        {% if response['processed_sizes']%}
+                                            Processed Sizes: {{ response['processed_sizes'] }}
+                                        {% else %}
+                                            No processed size exits.
+                                        {% endif %}
+                                    </span>
+                                </h5>
+                            </div>
+
+                            <!-- BUTTON FOR EXPORTING ALL RECONSTITUTION -->
+                            <form class="row g-3" action="export_all_automated_validations" method="POST">
+
+                                {% if automated_validations == '0' %}
+                                <button class="btn btn-primary border-light btn-light" type="submit"
+                                    style=" height:1rem; padding-top:0rem; padding-right:0.9rem;
+                                    padding-bottom:1rem; background-color:white;"  disabled>
+
+                                    <span aria-hidden="true" class="badge rounded-pill text-bg-primary"
+                                        style="padding-bottom:0.5rem; padding-top:0.5rem;  width:70%;">
+                                        Export all &nbsp;
+                                        <span aria-hidden="true" class="badge rounded-pill text-bg-danger"
+                                              style="padding-left:1rem; padding-right:1rem;">
+                                            {{automated_validations}}
+                                        </span>
+                                         &nbsp; automated validations
+                                    </span>
+                                </button>
+                                {% else %}
+                                <button class="btn btn-primary border-light btn-light" type="submit"
+                                    style=" height:1rem; padding-top:0rem; padding-right:0.9rem;
+                                    padding-bottom:1rem; background-color:white;">
+
+                                    <span aria-hidden="true" class="badge rounded-pill text-bg-primary"
+                                        style="padding-bottom:0.5rem; padding-top:0.5rem;  width:70%;">
+                                        Export all &nbsp;
+                                        <span aria-hidden="true" class="badge rounded-pill text-bg-danger"
+                                              style="padding-left:1rem; padding-right:1rem;">
+                                            {{automated_validations}}
+                                        </span>
+                                         &nbsp; automated validations
+                                    </span>
+                                </button>
+                                {% endif %}
+
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <p></p>
+
+    <!-- MANUAL VALIDATIONS -->
+    <div class="card" style="">
+
+        <!-- CARD HEADER -->
+        <div class="card-header">
+            <h2 class="card-title">Export Manual Validations</h2>
+        </div>
+
+        <!-- CARD BODY -->
+        <div class="card-body text-center">
+
+            <!-- SECOND ROW -->
+            <div class="row">
+
+                <!-- RECONSTITUTIONS READY FOR EXPORT -->
+                <div class="col-sm-6 ">
+
+                </div>
+
+                <!-- ROW 2 COL 2-->
+                <div class="col-sm-6">
+                    <div class="card mb-3 h-100">
+
+                        <!-- SINGLE RECONSTITUTION EXPORT LABEL -->
+                        <div class="card-header">
+                            <h5 class="card-title">Export the manually validated reconstitutions</h5>
+                        </div>
+
+                        <div class="card-body">
+                            <form class="row g-3"  action="export_manual_validations" method="POST" style="text-align:center">
+                                <div class="mb-3">
+
+                                    <!-- EXPORT BUTTON FOR A SINGLE RECONSTITUTION -->
+
+                                    {% if manual_validations == '0' %}
+                                        <button class="btn btn-primary border-light btn-light align-top" type="submit"
+                                            style=" height:1rem; text-align: center; padding-top:0rem; padding-right:0.9rem;
+                                            padding-bottom:1rem; background-color:white; width:100%;" disabled>
+                                            <span aria-hidden="true" class="badge rounded-pill text-bg-primary"
+                                                style="padding-bottom:0.5rem; padding-top:0.5rem; width:70%;">
+                                                Export all &nbsp;
+                                                <span aria-hidden="true" class="badge rounded-pill text-bg-danger"
+                                                      style="padding-left:1rem; padding-right:1rem;">
+                                                    {{ manual_validations }}
+                                                </span>
+                                                 &nbsp; manual validations
+                                            </span>
+                                        </button>
+                                    {% else %}
+                                        <button class="btn btn-primary border-light btn-light align-top" type="submit"
+                                            style=" height:1rem; text-align: center; padding-top:0rem; padding-right:0.9rem;
+                                            padding-bottom:1rem; background-color:white; width:100%;">
+                                            <span aria-hidden="true" class="badge rounded-pill text-bg-primary"
+                                                style="padding-bottom:0.5rem; padding-top:0.5rem; width:70%;">
+                                                Export all &nbsp;
+                                                <span aria-hidden="true" class="badge rounded-pill text-bg-danger"
+                                                      style="padding-left:1rem; padding-right:1rem;">
+                                                    {{manual_validations}}
+                                                </span>
+                                                 &nbsp; manual validations
+                                            </span>
+                                        </button>
+                                    {% endif %}
+
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <p></p>
+
+    <!-- RELATIONS -->
+    <div class="card" style="">
+
+            <!-- CARD HEADER -->
+            <div class="card-header">
+                <h2 class="card-title">Export Event relations</h2>
+            </div>
+
+            <!-- CARD BODY -->
+            <div class="card-body text-center">
+                <p></p>
+                <form class="row g-3" action="export_relations" method="POST">
+
+                    <input type="text" name="relations-file" value="{{ response['relations_path'] }}" hidden="hidden">
+
+                    <!-- FIRST ROW -->
+                    <div class="row">
+
+                        <!-- EMPTY COLUMN -->
+                        <div class="col-sm-6 ">
+
+                        </div>
+
+                        <!-- ROW 2 COL 2-->
+                        <div class="col-sm-6">
+
+                            <div class="card mb-3 h-100">
+
+                                <!-- SINGLE RECONSTITUTION EXPORT LABEL -->
+                                <div class="card-header">
+                                    <h5 class="card-title">Export the manually validated reconstitutions</h5>
+                                </div>
+
+                                <div class="card-body">
+
+                                    <form class="row g-3"  action="export_manual_validations" method="POST" style="text-align:center">
+                                        <div class="mb-3">
+
+                                            <!-- EXPORT BUTTON FOR A SINGLE RECONSTITUTION -->
+                                            <p></p>
+                                            {% if response['relations_path'] %}
+                                                <button class="btn btn-primary border-light btn-light align-top" type="submit"
+                                                    style=" height:1rem; text-align: center; padding-top:0rem; padding-right:0.9rem;
+                                                    padding-bottom:1rem; background-color:white; width:100%;">
+                                                    <span aria-hidden="true" class="badge rounded-pill text-bg-primary"
+                                                        style="padding-bottom:0.5rem; padding-top:0.5rem; width:70%;">
+                                                        Export relations
+                                                    </span>
+                                                </button>
+                                            {% else %}
+                                                <button class="btn btn-primary border-light btn-light align-top" type="submit"
+                                                    style=" height:1rem; text-align: center; padding-top:0rem; padding-right:0.9rem;
+                                                    padding-bottom:1rem; background-color:white; width:100%;" disabled>
+                                                    <span aria-hidden="true" class="badge rounded-pill text-bg-primary"
+                                                        style="padding-bottom:0.5rem; padding-top:0.5rem; width:70%;">
+                                                        Export relations
+                                                    </span>
+                                                </button>
+                                            {% endif %}
+                                        </div>
+                                    </form>
+
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                </form>
+            </div>
+
+    </div>
+
+
+    <button type="submit" id="download" hidden="">download</button>
+
+
+
+    <script>
+
+        'app/C2RC/src/data/outputs/serialised/Triples/Zeeland-Test-1-Relations.ttl'
+        const file_path = '/js/Amsterdam-Relations.nt' ;
+        const file = new Request(file_path);
+        const download_btn = document.getElementById('download') ;
+
+        download_btn.addEventListener('click', () => {
+
+            console.log('STARTED' + '${file}') ;
+
+            fetch(file)
+                .then(response => {
+                    const reader = response.body.getReader() ;
+                    const totalSize = Number(response.headers.get('content-length')) ;
+                    let totalSizeDownloaded = 0 ;
+
+                    function readData() {
+                        return reader.read().then(result => {
+                            if(result.value) {
+                                totalSizeDownloaded += result.value.length ;
+                                const percentage = Math.floor((totalSizeDownloaded/totalSize) * 100) ;
+                                console.log('${totalSizeDownloaded}/${totalSize} ${percentage}') ;
+                            }
+                        }) ;
+                    }
+
+                    return readData()
+                })
+                .catch()
+                .finally()
+        }) ;
+
+    </script>
+
+{% endblock %}
+
+
+

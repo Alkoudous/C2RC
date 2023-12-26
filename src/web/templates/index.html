@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename= 'css/style.css') }}">
+    <title>Pers Reconstitutions Cleaner</title>
+</head>
+
+<body>
+
+    {% extends 'base.html' %}
+
+    {% block content %}
+
+    <!-- 1. TITLE 4.5-->
+    <h1 style="text-align:center; padding:1rem;  position-sticky; color:white;
+    font-family: Audiowide, sans-serif; font-weight: bold;">
+        <p style="padding:1rem;">CIVIL REGISTRY RECONSTITUTIONS CLEANER </p>
+    </h1>
+
+    <!-- 2. CIVIL REGISTRIES CARD -->
+    <p style=" text-align: justify;"></p>
+    <div class="card border-primary mb-3">
+        <h2 class="card-header">Civil Registry</h2>
+        <div class="card-body">
+
+            <!-- 2. CIVIL REGISTRIES DEFINITION -->
+            <h4 class="card-title text-center">Civil Registration is the system by which a government records the vital
+                <br> events (births, marriages, baptism and deaths) of its citizens and residents.
+            </h4>
+            <p></p>
+
+            <!-- 2. CIVIL REGISTRIES image -->
+            <div>  <img src="/static/images/Birth certificate.png" class="card-img" alt="Civil Record" >  </div>
+        </div>
+    </div>
+
+
+    <!-- 3. RECONSTITUTED  CARD  -->
+    <p></p>
+    <div class="card border-primary mb-3"  style="text-align: justify">
+        <h2 class="card-header">Reconstituted</h2>
+
+        <div class="row g-0">
+
+            <div class="col-md-4" style="padding-left:1rem; padding-bottom:1rem; width:35%">
+                <img src="/static/images/ExtendedFamily.png" class="img-fluid rounded-start"
+                   alt="Extended Family" style="padding-top:1.3rem">
+            </div>
+
+            <div class="col-md-8" style="width:65%; PADDING-RIGHT:1REM; padding-top:1.2rem;">
+                <div class="card-body">
+                    <h5>
+                        <P>
+                            Nations register civilians using a unique identifier such as a social security number.
+                            This unique identifier allows officials and researchers to retrace all life events of a civilian in the
+                            country. When nations introduced civil registries in the late 19th Century, civilians were not yet uniquely
+                            identified. Therefore, historians who want to trace the life course of a single individual before the
+                            introduction of unique identifiers have to rely on attributes such as the name, and the date and place of
+                            birth.
+                        </P>
+                        <P>
+                            Unfortunately it is difficult to disambiguate citizens without a unique identifier, since people often share
+                            the same attribute values. When a civilian is mentioned in multiple certificates (birth, marriage, or death)
+                            with different identifiers, we create a unique identifier that links to all the observations of that individual.
+                            BurgerLinker generates this unique identifier for an individual with multiple name spellings, date and place
+                            of birth mentioned in several certificates. This unique identifier ‘reconstitutes’ an individual based on the
+                            events in which they appear.
+                        </P>
+                    </h5>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!--  BURGER LINKER  CARD  -->
+    <!--    <p></p>-->
+    <!--    <div class="card border-primary mb-3"  style="text-align: justify">-->
+    <!--        <h2 class="card-header">Reconstituted</h2>-->
+    <!--      <div class="row g-0">-->
+    <!--        <div class="col-md-4" style="padding-left:1rem">-->
+    <!--          <img src="/static/images/BurgerLinker.png" class="img-fluid rounded-start" alt="jacket" style="padding-top:1.3rem">-->
+    <!--        </div>-->
+    <!--        <div class="col-md-8">-->
+    <!--          <div class="card-body">-->
+
+    <!--          </div>-->
+    <!--        </div>-->
+    <!--      </div>-->
+    <!--    </div>-->
+
+
+    <!-- 4. EVALUATION CARD: OBJECTIVES  -->
+    <p></p>
+    <div class="card border-primary mb-3" >
+
+        <h2 class="card-header">Objectives</h2>
+
+        <div class="card-body" style="text-align: justify;">
+
+            <div class="row g-0" style="text-align:justify; padding-top:1rem; padding-right:1rem; padding-left:1rem;">
+                <h5>
+                    <p>
+                        The goal of the Civil Registry Reconstitutions Cleaner (C2RC) is to
+                        help assess the correctness  of computed reconstitutions of individuals.
+                    </p>
+                    <p>
+                        C2RC evaluates the quality of the reconstitutions generated by the BurgerLinker tool based on
+                        sets of soft and hard rules. For instance, a reconstitution is unlikely when an individual is
+                        mentioned in two birth certificates. In this case, the ‘hard rule’ stating that a person can
+                        only be born once is broken. A ‘soft rule’ is based on the assumption that consecutive children
+                        for example cannot be born more than ten years apart. The rules are inspired by the expected
+                        structure of an extended family.
+                    </p>
+                </h5>
+            </div>
+
+            <div class="row g-0" style="text-align:justify; padding-right:1rem; padding-left:1rem;">
+
+                <!-- OBJECTIVES DESCRIPTION  -->
+                <div class="col-md-8" style="width:65%">
+                    <h5>
+                        <p>
+                            The tool shows the rules broken by a reconstituted individual to assist the user in judging
+                            the correctness of a reconstitution. For each reconstitution the tool displays subgroups
+                            clustering individuals who appear together more than once. Based on this evidence, a user
+                            can decide to merge or exclude subgroups from a reconstitution.
+                        </p>
+
+                        <p> Computed reconstitutions might not refer to a unique person due to  : </p>
+
+                        <p>
+                            <ul>
+                                <li class="list-group-item"> &#x2022; A weak set of discriminating criteria. </li>
+                                <li class="list-group-item"> &#x2022; The quality and size of the data. </li>
+                                <li class="list-group-item"> &#x2022; Limitations of matching algorithms </li>
+                            </ul>
+                        </p>
+
+                    </h5>
+                </div>
+
+                <!-- IMAGE  -->
+                <div class="col-md-4" style="padding-right:1rem; padding-left:1rem;
+                padding-top:2rem; padding-bottom:0rem; text-align:center;">
+
+                    <img src="/static/images/Results-2.png" class="img-fluid rounded-start rounded-end"
+                    alt="..." style="padding-top:0rem; width:75rem">
+
+                </div>
+
+            </div>
+
+            <div class="row g-0" style="text-align:justify; padding-right:1rem; padding-left:1rem;">
+
+                <h5>
+                    <p>
+                        C2RC therefore facilitates the identification of false positives and highlights potentially
+                        erroneous reconstitutions. The tool can thus evaluate the overall power of the discriminating
+                        strategy developed in the LINKS project and re-implemented by the BurgerLinker entity matching tool.
+                    </p>
+                </h5>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- 5. EVALUATION RULES  -->
+    <div class="row">
+
+        <!--  SOFT RULES  -->
+        <div class="col-sm-6">
+            <div class="card border-primary mb-3 h-100">
+
+                <div class="card-body"  style="text-align: justify; padding-bottom:0rem;">
+
+                    <h5 class="card-title"> ⚠️ Soft Rules  </h5>
+
+                    <ul class="list-group-numbered">
+
+                        <!-- 1 -->
+                        <li class="list-group-item">A person is unlikely to have
+                          more than 20 <span style="color:brown;">children</span>.</li>
+
+                        <!-- 2 -->
+                        <li class="list-group-item">
+                            A person is unlikely to <span style="color:brown;">marry</span> more than 5 times.</li>
+
+                        <!-- 3 -->
+                        <li class="list-group-item">
+                            A person should not have more <span style="color:brown;">married children</span> than children. </li>
+
+                        <!-- 4 -->
+                        <li class="list-group-item">
+                            A person should not have <span style="color:brown;">divorced</span> more than they got married.</li>
+
+                        <!-- 5 -->
+                        <li class="list-group-item">
+                          <span style="color:brown;">Consecutive children</span> are unlikely to be more than 10 years apart. </li>
+
+                        <!-- 6-->
+                        <li class="list-group-item">A person should not
+                           <span style="color:brown;">appear with the same person</span> only once (groundless).</li>
+
+                        <!-- 7 -->
+                        <li class="list-group-item">
+                             The number of <span style="color:brown;">grounded reconstituted subgroups</span>
+                            - where the reconstituted individual appears with the same person at least twice -
+                            should not exceed the number of children plus one.
+                        </li>
+
+                        <!-- 8 -->
+                        <li class="list-group-item">
+                            A person should not have more <span style="color:brown;">groundless observations</span>
+                            than a third of its reconstitution size. </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!--  HARD RULES  -->
+        <div class="col-sm-6 mb-3 mb-sm-0" style="text-align: justify">
+
+            <div class="card border-primary mb-3 h-100">
+
+                <div class="card-body" style="text-align: justify; padding-bottom:0rem;">
+
+                    <h5 class="card-title"> ❌ Hard Rules  </h5>
+
+                    <ul class="list-group-numbered">
+
+                        <li class="list-group-item">
+                          A person cannot be <span style="color:brown;">born</span> more than once. </li>
+
+                        <li class="list-group-item">
+                          A person's <span style="color:brown;">children</span> cannot be born more than once. </li>
+
+                        <li class="list-group-item">
+                          A woman is very unlikely to <span style="color:brown;">marry</span> before the age of 13. </li>
+
+
+                        <li class="list-group-item">
+                          A mother is very unlikely to <span style="color:brown;">give birth</span> past the age of 50. </li>
+
+                        <li class="list-group-item">
+                          A person should not break more than two <span style="color:brown;">soft rules</span>. </li>
+
+                        <li class="list-group-item">
+                          A person should have at most one <span style="color:brown;">father or mother</span>. <br>
+                          &nbsp;  &nbsp; A person cannot be <span style="color:brown;">known and unknown</span> at the same time.
+                        </li>
+                        <li class="list-group-item">
+                          The <span style="color:brown;">first and last child</span> of a mother are very unlikely
+                          to be more than 30 years apart.
+                        </li>
+            </ul>
+
+
+
+
+
+          </div>
+
+            </div>
+        </div>
+
+    </div>
+
+<!--    -->
+    <p style="padding-top:5rem; text-align: justify;"> </p>
+
+    {% endblock %}
+
+</body>
+
+
+</html>

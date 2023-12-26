@@ -1,0 +1,295 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <p></p>
+        <h1 style="text-align: center; padding-top: 20px; padding-bottom: 20px;  position-sticky;">
+            CIVIL REGISTRIES RECONSTITUTIONS CLEANER
+        </h1>
+    <p></p>
+
+    <!--  1. DATASETS INPUT FILE CARD  -->
+    <p></p>
+    <div class="card bg-light mb-3; sticky-top;" style="width: 100%;">
+
+        <!-- IMPORT DATASET FILES CARD Header -->
+        <div class="card-header">
+
+            <!-- HEADER -->
+            <h2 class="card-title">
+                <a class="nav-link ">Data</a>
+            </h2>
+
+            <!--  DATASETS MENU HEADER -->
+            <ul class="nav nav-tabs card-header-tabs">
+              <li class="nav-item"> <a class="nav-link" href="#">Upload</a> </li>
+              <li class="nav-item"> <a class="nav-link" href="{{ url_for('datasets') }}">Uploaded</a> </li>
+            </ul>
+
+        </div>
+
+
+        <!-- IMPORT DATASET FILES CARD BODY -->
+        <div class="card-body">
+            <ul class="a">
+                {% for file in files %}
+                    <li>
+                        <h4>{{ file.description }}</h4>
+                        <span class="badge light"> - Created : {{ file.created }} </span> <br>
+                        <span class="badge light"> - Path : {{ file.path }} </span>
+                    </li>
+                    <p></p>
+                {% endfor %}
+            </ul>
+        </div>
+
+    </div>
+
+
+    <!-- 2. Data Preprocessing CARD -->
+    <p></p>
+    <div class="card bg-light mb-3">
+
+        <!-- Data Preprocessing CARD Header -->
+        <div class="card-header">
+            <h2>
+                <a class="nav-link">Data Preprocessing</a>
+            </h2>
+            <ul class="nav nav-tabs card-header-tabs">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('reconstituted') }}" id="Reconstituted"
+                    onclick="clearBox('div_processing')">
+                        Reconstituted
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('persons') }}" id="Persons"
+                     onclick="clearBox('div_processing')">
+                        Persons
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('extended_family') }}" id="ExtendedFamily"
+                    onclick="clearBox('div_processing')">
+                        Extended Family
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('stats') }}" id="Statistics"
+                    onclick="clearBox('div_processing')">
+                        Statistics
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Data Preprocessing CARD BODY -->
+        <div class="card-body" id="div_processing">
+            <div class="card-text" style="font-size:small; font-family: courier;">
+                {% for line in description %}
+                    {% if line.startswith(" ") %}
+                    &nbsp;&nbsp;
+                    {% endif %}
+                    {{ line }}<br>
+                {% endfor %}
+            </div>
+
+            <table style="font-size:small; font-family: courier;">
+              {% for line in descriptions %}
+                <tr>
+                    {% if line.split(":")|length == 2 %}
+                        <td>&nbsp;&nbsp;{{ line.split(":")[0] }}</td>
+                        <td> &nbsp;:&nbsp; </td>
+                        <td>{{ line.split(":")[1] }}</td>
+
+                    {% elif line.split(":")|length == 3 %}
+                        <td>&nbsp;&nbsp;{{ line.split(":")[0] }}</td>
+                        <td> &nbsp;:&nbsp; </td>
+                        <td>{{ line.split(":")[1] }}</td>
+                        <td> &nbsp;:&nbsp; </td>
+                        <td>{{ line.split(":")[2] }}</td>
+
+                    {% else %}
+                        <td>{{ line }}</td>
+
+                    {% endif %}
+                </tr>
+             {% endfor %}
+            </table>
+        </div>
+
+    </div>
+
+
+
+    <!-- 3. EXTENDED FAMILY CARD -->
+    <p></p>
+    <div class="card bg-light mb-3; position-relative;">
+
+        <!-- EXTENDED FAMILY CARD HEADER -->
+        <div class="card-header" >
+
+            <div class="row" style="padding-left: 14px;">
+              <div class="column" style="width: 79%;">
+                  <h2><a class="nav-link " >Extended Family Analysis</a></h2>
+              </div>
+
+              <div class="column"  >
+                  <form action="/preprocessing/analysis" method="POST">
+                      <div class="input-group mb-3" style="padding-top: 12px;">
+                          <input type="text" class="form-control" placeholder="" aria-label=""
+                                 aria-describedby="basic-addon1" style="text-align: center; width:9rem;"
+                                 value="10" name="person_id" id="person_id">
+                          <div class="input-group-prepend">
+                            <button class="btn btn-primary btn-sm" type="submit" >Submit</button>
+                            <!--<input type="submit" value="Submit">-->
+                          </div>
+                      </div>
+                  </form>
+              </div>
+            </div>
+
+        </div>
+
+        <!-- EXTENDED FAMILY CARD BODY -->
+        <div class="card-body" style="font-size:small; font-family: courier; width: 100%;">
+
+            <table>
+                  {% for line in html_summary %}
+
+                        {% if line.split(":")|length == 2 %}
+                        <tr >
+                            <td style="width: 19%;">&nbsp;&nbsp;{{ line.split(":")[0] }}</td>
+                            <td> &nbsp;:&nbsp; </td>
+                            <td style="width: 80%;">{{ line.split(":")[1] }}</td>
+                        <tr>
+
+                        {% else %}
+                            <tr> {{ line }}<br> <tr>
+                        {% endif %}
+
+                 {% endfor %}
+            </table>
+
+            <div class="card-text" style="font-size:small; font-family: courier;">
+<!--                <p >-->
+<!--                {% for line in html_summary %}-->
+<!--                    {% if line.startswith(" ") %}-->
+<!--                    &nbsp;&nbsp;-->
+<!--                    {% endif %}-->
+<!--                    {{ line }}<br>-->
+<!--                {% endfor %}-->
+<!--                </p>-->
+            </div>
+
+
+        </div>
+
+
+
+
+<!--        <form action="/preprocessing/analysis">-->
+<!--  <label for="fname">First name:</label>-->
+<!--  <input type="text" id="fname" name="fname" value="John"><br><br>-->
+<!--  <label for="lname">Last name:</label>-->
+<!--  <input type="text" id="lname" name="lname" value="Doe"><br><br>-->
+<!--  <input type="submit" value="Submit">-->
+<!--</form>-->
+
+    </div>
+
+
+    <!-- THE END  -->
+    <p style="padding-top: 20px;></p>
+
+
+    <!--script-->
+    <script>
+        function clearBox(elementID) {
+            document.getElementById(elementID).innerHTML = "PROCESSING...";
+        }
+
+        function myFunction() {
+          document.getElementById("demo").innerHTML = "Hello World";
+        }
+    </script>
+
+{% endblock %}
+
+
+
+
+<!--            &lt;!&ndash; Upload &ndash;&gt;-->
+<!--            <div class="input-group mb-3" style="width: 100%;">-->
+
+<!--              <div class="custom-file">-->
+<!--                <input type="file" class="custom-file-input" id="upload_registries">-->
+<!--                <label class="custom-file-label" for="upload_registries">Choose file</label>-->
+<!--              </div>-->
+
+<!--              <div class="input-group-prepend">-->
+<!--                <span class="input-group-text">Upload Civil Registries</span>-->
+<!--              </div>-->
+
+<!--            </div>-->
+
+
+<!--            &lt;!&ndash; Upload &ndash;&gt;-->
+<!--            <div class="input-group mb-3" style="width: 100%;">-->
+
+<!--              <div class="custom-file">-->
+<!--                <input type="file" class="custom-file-input" id="upload_reconstructed">-->
+<!--                <label class="custom-file-label" for="upload_reconstructed">Choose file</label>-->
+<!--              </div>-->
+
+<!--              <div class="input-group-prepend">-->
+<!--                <span class="input-group-text">Upload Reconstructed</span>-->
+<!--              </div>-->
+
+<!--            </div>-->
+
+
+
+<!--<div class="row">-->
+<!--    <div class="column" style="width: 50%;">-->
+<!--    </div>-->
+
+<!--    <div class="column" style="width: 50%;">-->
+<!--    </div>-->
+<!--</div>-->
+
+
+
+
+
+
+
+<!--    <p></p>-->
+<!--    <div class="card bg-light mb-3" style="width: 100%;">-->
+
+<!--        &lt;!&ndash; Input Files CARD Header &ndash;&gt;-->
+<!--        <div class="card-header">-->
+
+<!--            &lt;!&ndash; HEADER &ndash;&gt;-->
+<!--            <h2 class="card-title">-->
+<!--                <a class="nav-link " href="{{ url_for('datasets') }}">Input Files</a>-->
+<!--            </h2>-->
+
+<!--        </div>-->
+
+
+<!--        &lt;!&ndash; END Input Files CARD BODY &ndash;&gt;-->
+<!--        <div class="card-body">-->
+<!--            <ul class="a">-->
+<!--                {% for file in files %}-->
+<!--                    <li>-->
+<!--                        <h4>{{ file.description }}</h4>-->
+<!--                        <span class="badge light"> - Created : {{ file.created }} </span> <br>-->
+<!--                        <span class="badge light"> - Path : {{ file.path }} </span>-->
+<!--                    </li>-->
+<!--                    <p></p>-->
+<!--                {% endfor %}-->
+<!--            </ul>-->
+<!--        </div>-->
+
+<!--    </div>-->

@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+
+    <head>
+
+    <title>{% block title %} {% endblock %}</title>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+              integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="static/css/style.css">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Audiowide|Sofia|Trirong">
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" ></script>
+    <!-- Bootstrap CSS -->
+    <!--    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"-->
+    <!--          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">-->
+    </head>
+
+
+    <!-- align-items: center; justify-content: center; place-items: center; -->
+    <body class="align-items-center "
+          style="background-color: #708090; align-items: center; justify-content: center; place-items: center;">
+
+
+    <!-- NAVIGATION NAR -->
+    <nav class="navbar fixed-bottom navbar-expand-md navbar-light navbar-light-hover-color"
+         style="background-color: #e3f2fd; padding-left:3rem; padding-right: 3rem; color:brown;">
+
+        <a class="navbar-brand" href="{{ url_for('index')}}" style=";">
+            <h4>
+                <span class="badge bg-primary" style=" color:orange
+                           {% if response['C2RC_active_color'] %} {% else %} color:white {%endif%}">
+                    C2RC
+                </span>
+            </h4>
+        </a>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- BASE MENU -->
+        <div class="collapse navbar-collapse" id="data_navbar">
+
+            <ul class="navbar-nav">
+
+                <!--  data  -->
+                <li class="nav-item">
+                    <h5>
+                        <a class="nav-link" href="{{ url_for('datasets') }}"
+                           style=" {{ response['datasets_active_color'] }}
+                           {% if response['datasets_active_color'] %} {% else %} color:black {%endif%}">
+                            Datasets
+                        </a>
+                    </h5>
+                </li>
+
+                <!--  Preprocessing  -->
+                <li class="nav-item">
+
+                    <h5>
+                        <a class="nav-link" href="{{ url_for('preprocesses') }}"
+                           style=" {{ response['preprocesses_active_color'] }}
+                           {% if response['preprocesses_active_color']%} {%else%} color:black {%endif%}">
+                            Preprocessing
+                        </a>
+                    </h5>
+
+                </li>
+
+                <!--  RUN SET  -->
+                <li class="nav-item">
+                    <h5>
+                        <a class="nav-link" href="{{ url_for('run') }}"
+                           style="{{ response['run_active_color'] }}
+                           {% if response['run_active_color']%} {%else%} color:black {%endif%}">
+                            Run Batch
+                        </a>
+                    </h5>
+                </li>
+
+                <!--  analysis  -->
+                <li class="nav-item">
+                    <h5>
+                        <a class="nav-link" href="{{ url_for('analysis') }}"
+                           style=" {{response['analysis_active_color']}}
+                           {% if response['analysis_active_color']%} {%else%} color:black {%endif%}">
+                            Analysis
+                        </a>
+                    </h5>
+                </li>
+
+                <!--  CONSISTENCY  -->
+                <li class="nav-item">
+                    <h5>
+                        <a class="nav-link" href="{{ url_for('validation_consistency') }}"
+                           style=" {{response['consistency_active_color']}}
+                           {% if response['consistency_active_color']%} {%else%} color:black {%endif%}">
+                            Consistency
+                        </a>
+                    </h5>
+                </li>
+
+
+                <!--  EXPORT  -->
+                <li class="nav-item">
+                    <h5>
+                        <a class="nav-link" href="{{ url_for('export') }}"
+                           style=" {{response['export_active_color']}}
+                           {% if response['export_active_color']%} {%else%} color:black {%endif%}">
+                            Export
+                        </a>
+                    </h5>
+                </li>
+            </ul>
+
+        </div>
+
+       <!-- SELECT DATABASE FROM DROPDOWN -->
+        <div class="dropdown-center dropup" data-bs-theme="dark" >
+
+            <form class="row g-3"  method="POST">
+                <button class="btn btn-secondary btn-sm dropdown-toggle dropup" type="button" name="drp" id="drp"
+                      data-bs-toggle="dropdown" aria-expanded="true" aria-haspopup="true">
+                        Select a Database
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        {{ response['db']|length }}
+                    </span>
+                </button>
+                <ul class="dropdown-menu" id="drpl">
+                  {% for db_name in response['db'] %}
+                    <li><a class="dropdown-item" href="{{ url_for('dropdown', name=db_name) }}">
+                        {{ db_name }}</a></li>
+                  {% endfor %}
+                </ul>
+            </form>
+
+        </div>
+
+        <!--<select class="dropdown-center"  data-mdb-clear-button="true">-->
+        <!--{% for db_name in db %}-->
+        <!--<li><option value="{{ db_name }}">{{ db_name }}</option>-->
+        <!--{% endfor %}-->
+        <!--</select>-->
+
+    </nav>
+
+
+
+
+
+    <p></p>
+    <div class="container" style="align: justify; align-items: center; width: 100%">
+        {% block content %} {% endblock %}
+    </div>
+    <p></p>
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>-->
+
+    <script
+      src="https://code.jquery.com/jquery-3.6.4.slim.min.js"
+      integrity="sha256-a2yjHM4jnF9f54xUQakjZGaqYs/V1CYvWpoqZzC2/Bw="
+      crossorigin="anonymous">
+    </script>
+
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous">
+    </script>
+
+    <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>-->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+        crossorigin="anonymous">
+    </script>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous" defer></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" crossorigin="anonymous"></script>
+
+    <!--  <script type="text/javascript" src="js/jquery-latest.js"></script>-->
+    <!--    <script type="text/javascript" src="js/bootstrap.js"></script>-->
+    <!--    <script type="text/javascript">-->
+    <!--        $(document).ready(function () {-->
+    <!--            $('.dropdown-toggle').dropdown();-->
+    <!--        });-->
+    <!--   </script>-->
+    </body>
+
+
+
+
+
+
+</html>

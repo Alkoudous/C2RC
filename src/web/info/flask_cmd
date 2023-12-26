@@ -1,0 +1,7 @@
+https://www.digitalocean.com/community/tutorials/how-to-make-a-web-application-using-flask-in-python-3
+
+export FLASK_APP=/Users/al/PycharmProjects/Clariah/CivCleaner/src/web/main
+export FLASK_APP=/Users/al/PycharmProjects/Clariah/Conda/C2RC/src/main
+export FLASK_ENV=development
+export FLASK_DEBUG=on
+flask run OR flask run -p 5001

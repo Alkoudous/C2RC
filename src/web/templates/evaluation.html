@@ -1,0 +1,2877 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <!-- TITLE -->
+    <div class="row text-end" style="padding-top:1rem;">
+
+        <div class="col-auto ">
+            <h1 style="text-align: center; color: #C4A484; padding-bottom:1rem;
+                font-family:Audiowide, Fantasy; font-weight:bold;">
+                <a class="navbar-brand" href="{{ url_for('index')}}" style=";"> C2RC </a>
+            </h1>
+        </div>
+
+        <div class=" input-group col-auto text-end justify-content-end align-bottom"
+             style="width:72%; padding-top:0.5rem; text-align:right;">
+
+                <h3 style="color: #C4A484; padding-bottom:1rem;
+                    font-family:Audiowide, Fantasy; font-weight: bold;">
+                        SELECTED DATABASE &nbsp;
+                </h3>
+
+        </div>
+
+        <div class=" input-group col-auto text-end justify-content-end align-bottom"
+             style="width:15.2%; padding-top:0.3rem; text-align:right;">
+
+                <h3 style="color: #C4A484; padding-bottom:1rem; font-family:Audiowide, Fantasy; font-weight: bold;">
+                        <span class="badge rounded-pill text-bg-info" style="padding-left:2rem; padding-right:2rem;
+                        padding-bottom:0.5rem; padding-top:0.5rem; font-family:Helvetica, 'Brush Script', Fantasy">
+                            {%if response['db']|length > 0 %} {{ response['selected_db_name'] }} {%else%} None {%endif%}
+                        </span>
+                </h3>
+
+
+        </div>
+
+    </div>
+    <p></p>
+
+
+    <!-- 1. SUBMIT BUTTONS FOR CLUSTER ID OR CLUSTER SIZE-->
+    <div class="card">
+
+        <!-- 1. CLUSTER TABLE {{show_table}}-->
+        <h2 class="card-header">
+
+            <div class="row">
+
+                <div class="col-auto" style="width:85%; padding:1rem">
+
+                    <h3>
+
+                        <a class="nav-link">
+
+                            Table of Reconstitutions of size
+                            <span aria-hidden="true" class="badge rounded-pill result"
+                                  style="padding-left:1.5rem; padding-right:1.5rem;">
+                                {% if selected_size > 0%}
+                                    {{selected_size}}
+                                {% else %}
+                                    ---
+                                {% endif %}
+                            </span>
+
+                            at page
+                            <span aria-hidden="true" class="badge rounded-pill result"
+                                  style="padding-left:1.5rem; padding-right:1.5rem;">
+                                {% if selected_index > 0 and pages > 0 %}
+                                    {{ previous_page }} / {{ pages }}
+                                {% else %}
+                                    ---
+                                {% endif %}
+                            </span>
+
+                            row
+                            <span aria-hidden="true" class="badge rounded-pill result"
+                                  style="padding-left:1.5rem; padding-right:1.5rem;">
+                                {% if selected_index > 0 and pages > 0 %}
+                                    {{selected_index}}
+                                {% else %}
+                                    ---
+                                {% endif %}
+                            </span>
+
+                            and ID
+                            <span aria-hidden="true" class="badge rounded-pill result"
+                                  style="padding-left:1.5rem; padding-right:1.5rem;">
+                                {% if analysis_data['cid'] %}
+                                    {{ analysis_data['cid'] }}
+                                {% else %}
+                                    ---
+                                {% endif %}
+                            </span>
+
+                        </a>
+                    </h3>
+
+                </div>
+
+            </div>
+
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#flush-collapseThree" aria-expanded="false"
+                    aria-controls="flush-collapseTwo">
+            </button>
+
+        </h2>
+
+        {% if show_table != 'checked' %}
+        <div class="card-body">
+
+            <!-- CLUSTER SIZE TABLE -->
+            <div class="bg-light mb-3 position-relative border-primary">
+
+                <!-- TABLE PAGINATION -->
+                <nav aria-label="Page navigation example"
+                     style="padding-bottom:0rem; position: -webkit-sticky; position: sticky; top: 0; z-index: 4; ">
+
+                    <div class="input-group mb-3 text-end justify-content-end"
+                         style="padding-top:1rem; padding-bottom:0rem; padding-right:1.5rem;">
+
+
+                        <!-- PREVIOUS PAGE BUTTON-->
+                        {% if previous_page > 0 and pages > 1 %}
+                            <form class="row g-3"  action="analysis_previous_pagination" method="POST"
+                                  name="previous_pagination_form" style="text-align:center">
+
+                                <!--  -->
+                                <button class="btn btn-primary border-light btn-light align-top" type="submit"
+                                       style=" height:1rem; text-align: center; padding-top:0rem; padding-right:0rem;
+                                       padding-bottom:1rem; background-color:white; padding-top:0.5rem">
+                                    <h5>
+                                        <span aria-hidden="true" class="badge rounded-pill text-bg-primary"
+                                             style="padding-left:0rem; padding-right:1rem; padding-top:0.4rem;">
+                                           <span aria-hidden="true" class="badge rounded-pill text-bg-dark" >
+                                               &laquo;
+                                           </span>
+                                           &nbsp; Previous Page
+                                        </span>
+                                    </h5>
+                                </button>
+
+                                <!-- SELECTED CLUSTER SIZE  -->
+                                <input type="search" name="pagination_number_previous_cs"
+                                       id="pagination_number_previous_cs" value="{{ selected_size }}" hidden="hidden">
+
+                                <!-- TABLE LIMIT  -->
+                                <input type="search" name="pagination_number_table-limit"
+                                       id="pagination_number_table-limit" value="{{ max_rows }}" hidden>
+
+                                <!-- PREVIOUS PAGE  -->
+                                <input type="text" name="previous_page" id="previous_page"
+                                       value="{{ previous_page }}" hidden>
+
+                                <!-- FLAG FILTERS -->
+                                <input type="search" value="{{ flag_filter }}" name="pagination_previous_flag_filter"
+                                     id="pagination_previous_flag_filter" hidden="hidden">
+
+                                <!-- VALIDATED RECONSTITUTIONS  -->
+                                <input type="search"  value="{{ validated }}" name="previous_pagination_validated"
+                                       id="previous_pagination_validated" hidden="hidden">
+
+                            </form>&nbsp;&nbsp;&nbsp;
+                        {% endif %}
+
+
+                        <!-- DISPLAY SIX EXTRA NEXT PAGE BUTTONS -->
+                        {% for i in range(second_page, pages + 1) %}
+                            {% if i <= second_page + 15 %}
+                                <form class="row g-3"  action="analysis_pagination_number" method="POST"
+                                      name="number_pagination_form" >
+
+                                    <!-- page number -->
+                                    <input type="text" name="next_button_page" id="next_button_page" value="{{ i }}"
+                                             aria-describedby="inputGroup-sizing-sm" hidden="hidden">
+
+                                    <!-- SELECTED CLUSTER SIZE  -->
+                                    <input type="search" hidden="hidden" value="{{ selected_size }}"
+                                           name="analysis_pagination_number_cs" id="analysis_pagination_number_cs" >
+
+                                    <!-- TABLE LIMIT -->
+                                    <input type="search"  name="analysis_pagination_number_table_limit"
+                                           id="analysis_pagination_number_table_limit" value="{{ max_rows }}"
+                                           hidden="hidden">
+
+                                    <!-- FLAG FILTERS -->
+                                    <input type="search"  name="pagination_number_flag_filter"
+                                           id="pagination_number_flag_filter" value="{{ flag_filter }}" hidden="hidden">
+
+                                    <!-- VALIDATED RECONSTITUTIONS  -->
+                                    <input type="search"  value="{{ validated }}" name="nbr_pagination_validated"
+                                           id="nbr_pagination_validated" hidden="hidden">
+
+                                    <!-- BUTTON -->
+                                    <button type="submit" class="btn btn-light" style="padding-top:0.7rem; padding-bottom:0rem">
+                                        <h5>
+
+                                            {% if selected_index == i %}
+                                            <span  aria-hidden="true" style="color:red;"> {{ i }} </span>
+                                            {% else %}
+                                            <span  aria-hidden="true" style="color:blue;"> {{ i }} </span>
+                                            {% endif%}
+
+                                        </h5>
+                                    </button>
+
+                                </form>
+                            {% endif %}
+                        {% endfor %}
+
+
+                        <!-- NEXT PAGE BUTTON -->
+                        {% if next_page <= pages  and pages > 1%}
+                            <form class="row g-3"  action="analysis_next_pagination" method="POST"
+                                  name="next_pagination_form" style="text-align:center">
+
+                                <button class="btn btn-primary border-light btn-light align-top" type="submit"
+                                       style=" height:1rem; text-align: center; padding-top:0rem; padding-right:0rem;
+                                       padding-bottom:1rem; background-color:white; padding-top:0.5rem">
+                                    <h5>
+                                      <span aria-hidden="true" class="badge rounded-pill text-bg-primary"
+                                         style="padding-left:1rem; padding-right:0rem; padding-top:0.4rem;"> Next Page &nbsp;
+                                         <span aria-hidden="true" class="badge rounded-pill text-bg-dark" > &raquo; </span>
+                                     </span>
+                                    </h5>
+                                </button>
+
+                                <!-- NEXT PAGE  -->
+                                <input type="text" name="next_page" id="next_page" value="{{ next_page }}"  hidden>
+
+                                <!-- SELECTED CLUSTER SIZE  -->
+                                <input type="search" value="{{ selected_size }}"
+                                       name="cluster_size_next" id="cluster_size_next" hidden>
+
+                                <!-- SELECTED CLUSTER SIZE  -->
+                                <input type="search" value="{{ max_rows }}"
+                                       name="Table-Limit_Next" id="Table-Limit_Next" hidden>
+
+                                <!-- FLAG FILTERS  -->
+                                <input type="search" value="{{ flag_filter }}" name="next_pagination_flag_filter"
+                                       id="next_pagination_flag_filter" hidden>
+
+                                <!-- VALIDATED RECONSTITUTIONS  -->
+                                <input type="search" value="{{ validated }}" name="next_pagination_validated"
+                                       id="next_pagination_validated" hidden>
+
+                            </form>
+                        {% endif %}
+
+
+                    </div>
+
+                </nav>
+
+                <!-- TABLE HIDE CONDITION -->
+                {% if hide_table == 'on' %}
+
+                <!-- TABLE ROWS SUMMARY -->
+                <div class="row input-group" style="padding-top:0rem" hidden="hidden">
+
+                    <div class="col-sm-6 mb-3 mb-sm-0 text-middle"
+                     style="width:100%; padding-bottom:1rem; padding-right:0rem; text-align:end">
+
+                        From the requested size
+
+                        <span class="badge text-bg-dark">
+                           {{ selected_size }}
+                        </span> a total of
+
+                        <span class="badge {% if table_size - bads ==0 %} text-bg-danger {% else%} text-bg-success {%endif%}">
+                          {% if table_size %}
+                            {{table_size - bads}} ( {{ ((table_size - bads) / table_size * 100) | round(1) }}% )
+                          {% else %}
+                            ---
+                          {% endif %}
+                        </span>
+
+                        clusters are likely to be correct out of the requested
+                        <span class="badge text-bg-dark">
+                          {% if table_size %}
+                           {{ table_size }}
+                          {% else %}
+                            ---
+                          {% endif %}
+                        </span> reconstitutions.
+
+                    </div>
+
+                </div>
+
+
+                <!-- TABLE -->
+                <div>
+
+                    <!-- CARD BODY height:20rem; -->
+                    <div class="card-body align-middle align-text-center table-responsive"
+                         style="text-align: center; overflow-x:auto; overflow:auto;
+                        padding-top:0rem; padding-bottom:0rem;">
+
+                        <!-- PAGINATION-->
+                        <h5 class="card-title"></h5>
+
+                        <!-- TABLE OF RECONSTITUTED OF A SPECIFIC SIZE -->
+                        <table class="table table-sm caption-top table-hover align-middle"
+                               style="font-size:14px; text-align:center; position:fixed-top">
+
+                            <!-- RECONSTITUTED TABLE HEADER -->
+                            <thead class="table-success align-text-center align-middle"
+                                   style="font-size:16px; position: -webkit-sticky; position: sticky; top: 0; z-index: 2;">
+                                <tr >
+                                    <th scope="col"> </th>
+                                    <th scope="col">Reconstitution ID</th>
+                                    <th scope="col">Name</th>
+                                    <th style="text-align:center" scope="col">Validated</th>
+                                    <th scope="col">Flag</th>
+                                    <th scope="col" style="align-items:center; height:2.2rem;">&nbsp;&nbsp;&nbsp;Analyse</th>
+                                </tr>
+                            </thead>
+
+
+                            <!-- RECONSTITUTED TABLE BODY -->
+                            <tbody class="table-group-divider">
+
+                                {% for row in processed_reconstitutions %}
+
+                                    <tr style="padding-bottom:0rem; padding-top:0rem; height:1rem"
+                                        class="align-middle table-secondary"
+                                        onmouseout="ChangeColor(this, false);" onclick="ChangeColor(this, true);">
+
+                                        <th scope="row" style="">{{loop.index}}</th>
+                                        <td>{{ row['cid'] }}</td>
+                                        <td>{{ row['name']|title }}</td>
+
+                                        <!-- VALIDATED CHECKBOX  -->
+                                        <td>
+                                            <div class="form-switch" style="width: 100%; text-align:center;">
+                                                {% if row['validated'] == 'yes' %}
+                                                    <input class="form-check-input" type="checkbox" value="ignore"
+                                                           name="validated-check" id="flexRadioDefault-validated-1"
+                                                           role="switch" checked disabled>
+                                                {% else %}
+                                                    <input class="form-check-input" type="checkbox" value="ignore"
+                                                           name="validated-check" id="flexRadioDefault-validated-2"
+                                                            role="switch" disabled>
+                                                {% endif %}
+                                            </div>
+                                        </td>
+
+                                        <!-- FLAGS -->
+                                        <td>
+
+                                            {% if row['flag'] == 'Unlikely'  %}
+                                                <span class="badge rounded-pill unlikely"
+                                                      style="padding-top:0.3rem; padding-bottom:0.3rem; width:6rem;">
+                                                   {{ row['flag'] }}
+                                                </span>
+
+                                            {% elif row['flag'] == 'Likely'  %}
+                                                <span class="badge rounded-pill likely"
+                                                      style="padding-top:0.3rem; padding-bottom:0.3rem; width:6rem;
+                                                      text-color:black; --bs-bg-opacity: 75;">
+                                                   {{ row['flag'] }}
+                                                </span>
+
+                                            {% elif row['flag'] == 'Uncertain'  %}
+                                                <span class="badge rounded-pill uncertain"
+                                                      style="padding-top:0.3rem; padding-bottom:0.3rem; width:6rem;">
+                                                   {{ row['flag'] }}
+                                                </span>
+
+                                            {% endif  %}
+
+                                        </td>
+
+                                        <!-- BUTTON -->
+                                        <td style="padding-bottom:0.2rem; padding-top:0.7rem; padding-left:1rem;
+                                                   justify-content:center; text-align:center;" >
+                                            <form class="row g-3"  action="analysis" method="POST" style="text-align:center">
+
+                                                <div class=" align-text-center"
+                                                     style="width: 100%; text-align:center;">
+                                                    <button class="btn btn-primary sml align-top" type="submit"
+                                                            name="table_analysis_btn" value="table-analysis-btn"
+                                                            style="padding-bottom:0.5rem; padding-top:0rem; width:6.5rem;">
+                                                    </button>
+                                                </div>
+
+                                                <input type="search" value="{{loop.index}}"
+                                                       name="index" id="index" hidden="hidden">
+
+                                                <input type="search" value="{{ row['cid'] }}"
+                                                       name="cid" id="cid" hidden="hidden">
+
+                                                <input type="search" value="{{ row['c_size'] }}"
+                                                       name="c_size" id="c_size" hidden="hidden">
+
+                                                <input type="text" value="{{ next_page }}"
+                                                     name="next_page_2" id="next_page_2" hidden="hidden">
+
+                                                <input type="search" value="{{ selected_size }}" name="cluster_size_2"
+                                                       id="cluster_size_2" hidden="hidden">
+
+                                                <!-- TABLE LIMIT -->
+                                                <input type="search" value="{{ max_rows }}" name="Table-Limit-Btn"
+                                                       id="Table-Limit-Btn" hidden="hidden">
+
+                                                <!-- FLAG FILTERS -->
+                                                <input type="search" value="{{ flag_filter }}"
+                                                       name="tbl_analysis_btn_flag_filter"
+                                                       id="tbl_analysis_btn_flag_filter" hidden="hidden">
+
+                                                <!-- VALIDATED RECONSTITUTIONS  -->
+                                                <input type="search" value="{{ validated }}"
+                                                     name="tbl_analysis_btn" id="tbl_analysis_btn" hidden="hidden">
+
+                                                <input type="search" value="{{ flag_filter }}" name="tbl_idx_btn_flag_filter"
+                                                       id="tbl_idx_btn_flag_filter" hidden="hidden">
+
+                                          </form>
+                                        </td>
+
+                                    </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+
+                <!-- TABLE CAPTION -->
+                <div class="text-body-secondary text-align-center"
+                    style="padding-top:1.6rem; padding-left:0rem; padding-bottom:0rem; padding-right:1rem;">
+
+                    <!-- NEXT RECONSTITUTION ID CAPTION FORM -->
+                    {% if processed_reconstitutions|length > 0 %}
+                        <form class="row g-3"  action="next_analysis" method="POST">
+                            <div class="row input-group" style="padding-right:0rem; padding-bottom:1rem">
+
+                                <div class="col-sm-6 mb-3 mb-sm-0 text-middle"
+                                     style="width:100%;  text-align:end; padding-bottom:0rem; padding-right:0rem;">
+
+                                    {% if likely['percentage_likely_s'] > 0 %}
+                                        Overall,
+                                        <span aria-hidden="true" class="badge rounded-pill likely"
+                                              style="padding-bottom:0.5rem; padding-top:0.5rem;">
+                                            {{ likely['percentage_likely_s'] }}% of the reconstituted
+                                            are more likely to be correct
+                                        </span>
+                                        as they display no warnings. This translates to
+                                        <strong>{{likely['likely_s']}}</strong>  out of
+                                        <strong>{{likely['full_size']}}</strong> reconstitutions of size {{selected_size}}.
+                                    {% else %}
+                                        <span aria-hidden="true" class="badge rounded-pill unlikely"
+                                              style="padding-bottom:0.5rem; padding-top:0.5rem;">
+                                            There are no likely reconstitutions of size {{selected_size}} with no warnings.
+                                        </span>
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+                        </form>
+                    {% endif %}
+
+                </div>
+
+                <hr class="likely" style="padding-left:3rem; padding-right:1rem;
+                                    height:5px; border-width:0;">
+                {% endif %}
+
+
+                <!-- FILTERS -->
+                <form class="g-3"  action="recon_sizes" method="POST" >
+
+                    <!-- PROCESSED SIZE BADGE -->
+                    <div class="row-auto input-group text-end justify-content-end"
+                        style="padding-top:0.5rem; padding-bottom:0.5rem; padding-right:1.6rem" >
+
+                        <!-- PROCESSED SIZE LIST BADGE -->
+                        <div class="col-auto align-bottom text-end justify-content-end"
+                             style="padding-bottom:0rem;">
+                            <h5>
+                                <span class="badge rounded-pill result"
+                                    style="padding-left:1.5rem; padding-right:1.5rem;">
+                                {% if processed_sizes %}
+                                    Available Sizes: {{ processed_sizes }}
+                                {% else %}
+                                    No processed size exits.
+                                {% endif %}
+                                </span>
+                            </h5>
+                        </div>
+                    </div>
+
+                    <!-- PROCESSED SIZE SUBMISSION -->
+                    <div class="row-auto text-end justify-content-end">
+
+                        <div class="col-auto" style="width:29%"> </div>
+
+                        <div class="col-auto input-group input-group-sm mb-3 text-end justify-content-end"
+                             style="padding-right:6rem;">
+
+                            <!-- FLAG FILTERS -->
+                            <span class="input-group-text likely" id="Flag-Filters" STYLE="HEIGHT:3REM">
+                                <strong style="width:4rem">  Flag </strong>
+                                <select class="form-select form-select-sm" aria-label="Default select example"
+                                    style="text-align:center; width:14rem" name="Filter-Flags">
+
+                                    {% if flag_filter == 'All' %}
+                                        <option value="All" selected>All</option>
+                                    {% else %}
+                                        <option value="All">All</option>
+                                    {% endif %}
+
+                                    {% if flag_filter == 'Unlikely' %}
+                                        <option value="Unlikely" selected>Unlikely</option>
+                                    {% else %}
+                                        <option value="Unlikely">Unlikely</option>
+                                    {% endif %}
+
+                                    {% if flag_filter == 'Uncertain' %}
+                                        <option value="Uncertain" selected>Uncertain</option>
+                                    {% else %}
+                                        <option value="Uncertain">Uncertain</option>
+                                    {% endif %}
+
+                                    {% if flag_filter == 'Likely' %}
+                                        <option value="Likely" selected>Likely with warning</option>
+                                    {% else %}
+                                        <option value="Likely">Likely with warning</option>
+                                    {% endif %}
+
+                                    {% if flag_filter == 'Likely-Star' %}
+                                        <option value="Likely-Star" selected>Likely without warning</option>
+                                    {% else %}
+                                        <option value="Likely-Star">Likely without warning</option>
+                                    {% endif %}
+
+
+
+
+
+                            </select>
+                            </span>
+
+                            <!-- VALIDATION FILTERS -->
+                            <span class="input-group-text likely" id="Validation-Filters" STYLE="HEIGHT:3REM">
+                                <strong style="width:6rem"> Validation </strong>
+                                <select class="form-select form-select-sm" aria-label="Default select example"
+                                    style="text-align:center; width:9rem;" name="Filter-Validated">
+
+                                    {% if validated == 'ignore' %}
+                                        <option value="ignore" selected>Ignore</option>
+                                    {% else %}
+                                        <option value="ignore">Ignore</option>
+                                    {% endif %}
+
+
+                                    {% if validated == 'yes' %}
+                                         <option value="yes" selected>Validated</option>
+                                    {% else %}
+                                        <option value="yes">Validated</option>
+                                    {% endif %}
+
+                                    {% if validated == 'no' %}
+                                         <option value="no" selected>Not validated</option>
+                                    {% else %}
+                                        <option value="no">Not validated</option>
+                                    {% endif %}
+
+                            </select>
+                            </span>
+
+                            <!-- SIZE FILTERS -->
+                            <span class="input-group-text likely" STYLE="HEIGHT:3REM">
+                                <strong style="width:4rem"> Size &nbsp; </strong>
+                                <input type="search" class="form-control form-control-sm" placeholder=""
+                                 aria-label="Reconstitution-Size" aria-describedby="basic-addon1"
+                                 style="text-align: center; width:5rem; padding-right:0rem"
+                                 value="{% if selected_size > 0 %} {{selected_size}} {% else %} {% endif %}"
+                                 name="cluster_size" id="cluster_size">
+                            </span>
+
+
+                            <!-- TABLE LIMIT -->
+                            <span class="input-group-text likely" STYLE="HEIGHT:3REM">
+                                <strong style="width:6rem"> Table Limit </strong>
+                                <input type="search" class="form-control form-control-sm" placeholder=""
+                                 aria-label="Reconstitution-Size" aria-describedby="basic-addon1"
+                                 style="text-align: center; width:5rem; padding-right:0rem"
+                                 value="{% if max_rows > 0 %} {{max_rows}} {% else %} 0 {% endif %}"
+                                 name="Table-Limit" id="Table-Limit">
+                            </span>
+
+                            <!-- HIDE TABLE SWITCH -->
+                            <span class="input-group-text likely" STYLE="HEIGHT:3REM" hidden="hidden">
+                                <strong style="width:6rem"> Hide table &nbsp; </strong>
+                                <div class="form-check form-switch form-check-reverse" style="padding-top:0.2rem;">
+                                    {% if hide_table == 'on' %}
+                                    <input class="form-check-input" type="checkbox"
+                                           id="flexSwitchCheckReverse1" name="Hide-Switch" checked>
+                                    {% else %}
+                                    <input class="form-check-input" type="checkbox"
+                                           id="flexSwitchCheckReverse2" name="Hide-Switch">
+                                    {% endif %}
+                                </div>
+                            </span>
+
+                            <!-- SUBMIT TABLE FILTERS BOTTOM -->
+                            <button class="btn btn-primary border-light btn-light align-top" type="submit"
+                            STYLE="PADDING-TOP:0.5REM; padding-left:2rem; background-color:white;"
+                            name="Submit-Table-Setting" value="submit it all">
+                                <h5>
+                                    <span aria-hidden="true" class="badge rounded-pill text-bg-primary"
+                                          style="padding-right:1.5rem; padding-left:1.5rem;
+                                          padding-top:0.5rem; padding-BOTTOM:0.6rem;">
+                                       Submit
+                                    </span>
+                                </h5>
+                            </button>
+
+                            <!-- SUBMIT TABLE HIDE BOTTOM -->
+                            {% if hide_table == 'on' %}
+                            <button class="btn btn-primary border-light btn-light align-top" type="submit"
+                            STYLE="PADDING-TOP:0.5REM; padding-left:2rem; background-color:white; width:6rem;"
+                            name="Submit-Table-Setting" value="off">
+                                <h5>
+                                    <span aria-hidden="true" class="badge rounded-pill text-bg-primary"
+                                          style="padding-right:1.5rem; padding-left:1.5rem;
+                                          padding-top:0.5rem; padding-BOTTOM:0.6rem;">
+                                        Hide Table
+                                    </span>
+                                </h5>
+                            </button>
+                            {% else %}
+                            <button class="btn btn-primary border-light btn-light align-top" type="submit"
+                            STYLE="PADDING-TOP:0.5REM; padding-left:2rem; background-color:white; width:6rem;"
+                            name="Submit-Table-Setting" value="on">
+                                <h5>
+                                    <span aria-hidden="true" class="badge rounded-pill text-bg-primary"
+                                          style="padding-right:1.5rem; padding-left:1.5rem;
+                                          padding-top:0.5rem; padding-BOTTOM:0.6rem;">
+                                        Show Table
+                                    </span>
+                                </h5>
+                            </button>
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </form>
+
+
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+    <p></p>
+
+
+    <!-- 2. ANYLISYS RESULTS -->
+    <div class="card">
+
+        <div class="card-body border-primary" style="padding-bottom:1.5rem">
+
+
+            <!-- SUBMIT A RECONSTITUTION ID -->
+            <div class="row" style="padding-top:0REM;">
+
+                <div class="column" >
+
+                    <form class="row g-3"  action="analysis" method="POST">
+
+                        <!-- HEADER -->
+                        <div class="col-auto" style="width:62.6%; padding-top: 0rem" >
+                          <h3><a class="nav-link " ></a>Reconstituted</h3>
+                        </div>
+
+                        <!-- INPUT BOX -->
+                        <div class="col-auto" style="padding-top: 0rem">
+                            <input type="search" class="form-control me-2" placeholder="Reconstitution-ID"
+                                 aria-label="Reconstitution-ID" aria-describedby="basic-addon1"
+                                 style="text-align:center; width:10.5rem; padding-right:0rem"
+                                 value="{{ submitted_reconstitution_id }}" name="reconstitution_id"
+                                 id="Reconstitution_id">
+                        </div>
+
+                        <!-- SUBMIT BUTTON-->
+                        <div class="col-auto" style="padding-top: 0rem ">
+                        <button class="btn btn-primary border-light btn-light align-top" type="submit" style="background-color:white;">
+                            <h5>
+                                <span aria-hidden="true" class="badge rounded-pill text-bg-primary"
+                                     style="padding-right:1.5rem; padding-left:1.5rem; padding-top:0.5rem; padding-BOTTOM:0.5rem;">
+                                   Submit a reconstitution ID
+                                </span>
+                            </h5>
+                        </button>
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+
+            <!-- 4. EXTENDED FAMILY DYNAMIC TABLE + REGROUPING-->
+            <div class="card bg-light mb-3; position-relative;"  style="width: 100%; height=500%;">
+
+                <!-- NEXT BUTTON-->
+                <form class="row g-3"  action="next_analysis" method="POST">
+
+                    <div style="padding-bottom: 2rem; padding-top: 1rem; padding-right: 2rem; text-align:right">
+
+                        <!--  SELECTED CLUSTER SIZE -->
+                        <input type="search" value="{{selected_size}}" name="selected_size" id="selected_size" hidden>
+
+                        <!--  SELECTED RECONSTITUTED TABLE INDEX -->
+                        <input type="search" value="{{selected_index}}" name="selected_index" id="selected_index" hidden>
+
+                        <!-- NEXT PAGE  -->
+                        <input type="text" name="next_page_3" id="next_page_3" value="{{ next_page }}"
+                                 aria-describedby="inputGroup-sizing-sm" hidden>
+
+                        <!-- FLAG FILTERS -->
+                        <input type="search" value="{{ flag_filter }}" name="next_table_idx_flag_filter"
+                               id="next_table_idx_flag_filter" hidden>
+
+                        <!-- VALIDATED RECONSTITUTIONS  -->
+                        <input type="search" value="{{ validated }}" name="next_table_idx_validated"
+                               id="next_table_idx_validated" hidden>
+
+                        <!-- TABLE LIMIT -->
+                        <input type="search"  value="{{ max_rows }}" name="next_table_limit_validated"
+                               id="next_table_limit_validated" hidden="hidden">
+
+                        <!-- style="width:100%;  text-align:end padding-right:0.2rem"-->
+                        {% if processed_reconstitutions|length > 0 %}
+                        <button class="btn btn-primary border-light btn-light align-top" type="submit"
+                               style=" height:1rem; text-align: center; padding-top:0rem; padding-right:0rem;
+                               padding-bottom:1rem; background-color:white">
+
+                            <!-- style="width:6rem; height:1.4rem; padding-top:0.25rem; padding-bottom:0rem;" -->
+                            <h5>
+                            <span aria-hidden="true" class="badge rounded-pill text-bg-primary"
+                                 style="padding-right:0rem; padding-left:1.5rem; padding-top:0.5rem; padding-bottom:0.3rem; ">
+                               Next Reconstitution ID at Row &nbsp;
+                               <span aria-hidden="true" class="badge rounded-pill text-bg-dark" >
+                               {% if selected_index >= 0%}
+                                    {{selected_index + 1}}
+                               {% else %}
+                                    ---
+                               {% endif %}
+                                   </span>
+                            </span>
+                            </h5>
+                        </button>
+                        {% endif %}
+
+                    </div>
+
+                </form>
+
+
+                <!-- ACCORDION -->
+                <div class="accordion accordion-flush" id="accordionFlush2" style="tex-align:right">
+
+                    <!-- ACCORDION ITEM 1 : Analysis -->
+                    <div class="accordion-item">
+
+                        <!-- ACCORDION HEADER -->
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                  data-bs-target="#flush-collapse1" aria-expanded="false"
+                                  aria-controls="flush-collapse1">
+                                <h4>
+
+                                    <div class="row">
+                                        <div class="col" style="padding-top:0.2rem;"> Analysis </div>
+                                        {% if analysis_data['cid'] %}
+                                        <div class="col">
+                                            <span class="badge align-top align-text-top rounded-pill result"
+                                                  style="padding-bottom:0.4rem; padding-top:0.4rem;
+                                                  padding-left:1.5rem; padding-right:1.5rem;">
+
+                                                {{ analysis_data['cid'] }} &nbsp; is &nbsp;
+
+                                                {% if analysis_data['flag'] == "Unlikely" %}
+                                                    <span class="badge align-top align-text-top  rounded-pill unlikely"
+                                                          style="padding-bottom:0.3rem; padding-top:0.3rem;
+                                                          padding-left:1rem; padding-right:1rem;">
+                                                        {{analysis_data['flag']}}
+                                                    </span>
+
+                                                {% elif analysis_data['flag'] == "Likely" %}
+                                                    <span class="badge align-top align-text-top rounded-pill likely"
+                                                          style="padding-bottom:0.3rem; padding-top:0.3rem;
+                                                          padding-left:1rem; padding-right:1rem;">
+                                                        {{analysis_data['flag']}}
+                                                    </span>
+
+                                                {% elif analysis_data['flag'] == "Uncertain" %}
+                                                    <span class="badge align-top align-text-top rounded-pill uncertain"
+                                                          style="padding-bottom:0.3rem; padding-top:0.3rem;
+                                                          padding-left:1rem; padding-right:1rem;">
+                                                        {{analysis_data['flag']}}
+                                                    </span>
+                                                {% endif %}
+                                            </span>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+
+                                </h4>
+                            </button>
+                        </h2>
+
+                        <!-- ACCORDION BODY -->
+                        <div id="flush-collapse1" class="accordion-collapse collapse show"
+                             data-bs-parent="#accordionFlush2">
+
+                            <div class="accordion-body">
+
+                                <!-- 4. DYNAMIC RECONSTITUTED NAME AND RULES' SUMMARY -->
+                                {% if analysis_data['flag'] is not none %}
+                                    <div class="row"
+                                         style="width: 102%; text-align:justify; scrolling: auto; overflow:auto;">
+
+                                        <!--  SUMMARY TEXT -->
+                                        <div class="col-sm-6 mb-3 mb-sm-0" style="width:43%">
+
+                                            <div class="card border-primary h-100">
+
+                                                <div class="card-body text-wrap"
+                                                     style="height:15rem; valign:middle; overflow:auto;" >
+
+                                                    <!-- PERSON'S NAME -->
+                                                    <h5 class="card-title" style="font:Brush Script MT">
+                                                        Natural Language Summary
+                                                    </h5>
+
+                                                    <!-- RECONSTITUTED ID -->
+                                                    <p class="card-text text-wrap text-break" style="overflow:auto">
+                                                        <h5 style="padding-left:1rem; color:brown; align:bottom">{{ analysis_data['name'] }}</h5>
+                                                        <p style="padding-left:2rem">{{ analysis_data['marital_text'] }}</p>
+                                                    </p>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                        <!--  RULES' SUMMARY -->
+                                        <div class="col-sm-6" style="width:57%">
+
+                                            <div class="card border-primary h-100">
+
+                                            <!-- BODY -->
+                                            <div class="card-body" style="font-size: 12px">
+                                                <h5 class="card-title">Rules' Summary</h5>
+                                                <p class="card-text"><pre>{{ analysis_data['html_summary'] }}</pre>
+                                                </p>
+                                            </div>
+
+                                            <!-- FOOTER -->
+                                            <div class="card-footer text-body-secondary"
+                                                 style="text-align: center; padding-top:1rem;">
+                                                <strong>
+
+                                                    {% if analysis_data['bads']>0 %}
+                                                    <h5>
+                                                        <span class="badge rounded-pill unlikely"
+                                                              style="padding-bottom:0.5rem;  padding-top:0.5rem;">
+                                                           {{ analysis_data['bads'] }} broken hard rule{% if analysis_data['bads']>1 %}s{% else %}{% endif %}
+                                                        </span>
+                                                        {% endif %}
+
+                                                        {% if analysis_data['bads']==0 and analysis_data['maybes']==0 %}
+                                                        <span class="badge rounded-pill likely"
+                                                            style="padding-bottom:0.5rem;  padding-top:0.5rem;">
+                                                          No broken rule.
+                                                        </span>
+                                                        {% endif %}
+
+                                                        {% if analysis_data['maybes']>0 %}
+                                                        <span class="badge rounded-pill uncertain"
+                                                            style="padding-bottom:0.5rem;  padding-top:0.5rem;">
+                                                           {{ analysis_data['maybes'] }} broken soft rule{% if analysis_data['maybes']>1 %}s{% else %}{% endif %}
+                                                        </span>
+                                                    </h5>
+                                                    {% endif %}
+
+                                                </strong>
+                                            </div>
+
+                                        </div>
+                                        </div>
+
+                                    </div>
+                                {% endif %}
+
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <!-- ACCORDION ITEM 2 : PERSON OBSERVATION TABLE -->
+                    <div class="accordion-item">
+
+                        <!-- ACCORDION HEADER -->
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed " type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#flush-collapse2" aria-expanded="false" aria-controls="flush-collapse2">
+
+                                    <div class="row">
+
+                                        <div class="col-auto"> <H4>Person Observations</H4> </div>
+
+                                        {% if analysis_data['cid'] %}
+                                        <div class="col-auto" style="padding-top:0.1rem;">
+                                            <span class="badge align-top align-text-top rounded-pill result"
+                                                  style="padding-bottom:0.4rem; padding-top:0.4rem;
+                                                  padding-left:1.5rem; padding-right:1.5rem;">
+
+                                                {{ analysis_data['cid'] }} &nbsp; is &nbsp;
+
+                                                {% if analysis_data['flag'] == "Unlikely" %}
+                                                    <span class="badge align-top align-text-top  rounded-pill unlikely"
+                                                          style="padding-left:1rem; padding-right:1rem;">
+                                                        {{analysis_data['flag']}}
+                                                    </span>
+
+                                                {% elif analysis_data['flag'] == "Likely" %}
+                                                    <span class="badge align-top align-text-top rounded-pill likely"
+                                                          style="padding-left:1rem; padding-right:1rem;">
+                                                        {{analysis_data['flag']}}
+                                                    </span>
+
+                                                {% elif analysis_data['flag'] == "Uncertain" %}
+                                                    <span class="badge align-top align-text-top rounded-pill uncertain"
+                                                          style="padding-left:1rem; padding-right:1rem;">
+                                                        {{analysis_data['flag']}}
+                                                    </span>
+                                                {% endif %}
+                                            </span>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+
+                            </button>
+
+                        </h2>
+
+                        <!-- ACCORDION BODY -->
+                        <div id="flush-collapse2" class="accordion-collapse collapse show"
+                             data-bs-parent="#accordionFlush2">
+                            <div class="accordion-body">
+
+                            <!-- DESCRIPTION OF THE RULE: children with more than one paren -->
+                            <div class="card-body">
+
+                                {% if analysis_data['grounded_table']|length != 0
+                                or analysis_data['groundless_table']|length !=0 %}
+
+                                <!-- DESCRIPTION OF GROUNDED, GROUNDLESS AND BROKEN RULES -->
+                                <div class="accordion accordion-flush" id="accordionFlushExample">
+
+                                    <!-- ACCORDION ITEM 1 -->
+                                    <div class="accordion-item">
+
+                                        <!-- ACCORDION ITEM 1 : HEADER -->
+                                        <h2 class="accordion-header">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                                                <strong>Grounded - Groundless description</strong>
+                                            </button>
+                                        </h2>
+
+                                        <!-- ACCORDION ITEM 1 : CONTENT -->
+                                        <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                                            <div class="accordion-body">
+
+                                                <!-- DESCRIPTION OF GROUNDED AND GROUNDLESS  -->
+                                                <div class="alert align-items-center alert-warning alert-dismissible fade show"
+                                                     role="alert" style="padding-bottom:0rem">
+
+                                                    <!-- DESCRIPTION OF GROUNDED -->
+                                                    <p class="card-text" style="text-align: justify;">
+                                                        <strong style="color:brown;">GROUNDED</strong> or evidence-based
+                                                        subgroups highlight that the reconstituted individual participated
+                                                        in several events with the same relative.
+                                                        <br>
+                                                        <strong style="color:brown;">GROUNDLESS</strong> subgroups of a
+                                                        reconstitution (in red) highlight that the reconstituted individual
+                                                        participated in only one event with the same relative.
+                                                    </p>
+
+                                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+
+                                                    </button>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <!-- ACCORDION ITEM 2 -->
+                                    {% if analysis_data['description'] is not none and analysis_data['description']|length > 0  %}
+                                    <div class="accordion-item">
+
+                                        <!-- ACCORDION ITEM 1 : HEADER -->
+                                        <h2 class="accordion-header">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+                                                <strong>
+                                                    How to look for and solve highlighted issues
+                                                </strong>
+
+                                            </button>
+                                        </h2>
+
+                                        <div id="flush-collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                                            <div class="accordion-body">
+                                                <!-- DESCRIPTION OF BROKEN RULES -->
+                                                <div class="alert align-items-center alert-warning alert-dismissible fade show"
+                                                     role="alert" style="padding-bottom:0rem">
+
+                                                    <!-- DESCRIPTION OF GROUNDED -->
+
+                                                    {% for key, description in analysis_data['description'].items()  %}
+                                                        <div><strong style="color:brown">{{ key }}</strong></div>
+                                                        <div style="padding-left:1rem">
+                                                            <strong style="color:black"> Confirm the issue - </strong>
+                                                            {{ description[0] }} </div>
+                                                        <div style="padding-left:1rem">
+                                                            <strong style="color:black"> Resolve the issue - </strong>
+                                                            {{ description[1] }} </div>
+                                                        <br>
+                                                    {% endfor %}
+
+
+                                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                                                    </button>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    {% endif  %}
+
+                                </div>
+
+                                <!-- PERSON OBSERVATIONS TABLE FORM-->
+                                <form class="row g-3"  action="write_manual_validation" method="POST" style="text-align:center">
+
+                                    <div class="card-body" style="padding-left:0rem; padding-right:0rem;">
+
+                                        <!-- TABLE CARD BODY height:20rem; -->
+                                        <div class="card-body align-middle align-text-center table-responsive"
+                                             style="text-align: center; overflow-x:auto; overflow:auto;
+                                             padding-top:0rem; padding-bottom: 0rem;">
+
+                                            <!-- TITLE-->
+                                            <h5 class="card-title"></h5>
+
+                                            <!-- TABLE OF RECONSTITUTED OF A SPECIFIC SIZE -->
+                                            <table class="table table-sm caption-top table-hover align-middle"
+                                                   id="observations"
+                                                   style="font-size:12px; text-align:center; position:fixed-top">
+
+                                                <!-- TABLE HEADER -->
+                                                <thead class="table-success align-text-center align-middle"
+                                                       style="font-size:16px; position:-webkit-sticky; position:sticky;
+                                                       top:0; z-index:2;">
+                                                    <tr style="height:3rem;">
+                                                        <th scope="col"> </th>
+                                                        <th scope="col">E. Type</th>
+                                                        <th scope="col">Cert.</th>
+                                                        <th scope="col">Cert. Date</th>
+                                                        <th scope="col">Rec. ID</th>
+                                                        <th scope="col">Ext. Fa. ID</th>
+                                                        <th scope="col">Rec. Name</th>
+                                                        <th scope="col">Role</th>
+                                                        <th scope="col">Ext. Fa. Name</th>
+                                                        <th scope="col">Ext. Fa. Cluster</th>
+                                                        <th scope="col">Row</th>
+                                                        <th scope="col">Subgroup</th>
+                                                    </tr>
+                                                </thead>
+
+
+                                                <!-- TABLE BODY -->
+                                                <tbody class="table-group-divider">
+
+                                                    <!-- EMPTY ROW -->
+                                                    <tr class="align-middle table-white">
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                    </tr>
+
+                                                    <!-- GROUNDED TABLE ROWS -->
+                                                    {% for key, list in analysis_data['grounded_table'].items() %}
+                                                        {% set outer_loop = loop %}
+                                                        {% for dict in list %}
+                                                            <tr class="align-middle table-warning"
+                                                            style="padding-bottom:0rem; padding-top:0rem; height:1rem"
+                                                            onmouseout="ChangeColor(this, false);" onclick="ChangeColor(this, true);">
+                                                                
+                                                                <th scope="row">{{ outer_loop.index }}.{{loop.index}}</th>
+                                                                <td style="color:brown;">
+                                                                    <input type="search" class="form-control me-2" placeholder="Cluster-ID"
+                                                                         aria-label="Cluster-ID" aria-describedby="basic-addon1"
+                                                                         value="{{ dict['rid'] }}" name="row-id" id="row-id" hidden="">
+                                                                    {%  if dict['role'] in ['--bHasMother->', '<-bHasMother--', '<-bHasFather--', '--bHasFather->', '--gHasMother->', '<-gHasMother--', '<-gHasFather--', '--gHasFather->', '<--married----', '---married--->'] %}
+                                                                        M
+                                                                    {%  elif dict['role'] in ['<-hasFather---', '<-hasMother---', '--nHasFather->', '<-nHasMother---', '--nHasMother->'] %}
+                                                                        B
+                                                                    {%  endif %}
+                                                                </td>
+                                                                <td style="color:brown;">{{ dict['certificate'] }}</td>
+                                                                <td style="color:brown;">{{ dict['certificateDate'] }}</td>
+                                                                <td style="color:brown;">{{ dict['p_ID'] }}</td>
+                                                                <td style="color:brown;">{{ dict['associationPersonID'] }}</td>
+                                                                <td style="color:brown;">{{ dict['p_name'] }}</td>
+                                                                <td style="color:brown;">{{ dict['role'] }}</td>
+                                                                <td style="color:brown;">{{ dict['associationPersonName'] }}</td>
+                                                                <td style="color:brown;">{{ dict['associated_cluster'] }}</td>
+                                                                <td style="color:brown;">
+                                                                    {{ dict['rid'] }}
+                                                                </td>
+                                                                <td class="align-items-center align-self-center align-content-center d-print-flex align-middle align-text-middle"
+                                                                    style="padding-bottom:0rem; padding-top:0rem;
+                                                                    padding-left:0rem; padding-right:0rem;  justify-content:center;
+                                                                    align-items:center; height:2rem;">
+
+                                                                    <input type="search" value="{{ loop.index }}" name="idx1" id="idx1" hidden="">
+
+                                                                    <select onchange="color(this, '{{dict['rid']}}', {{ nightfall }})"
+                                                                            class="form-select form-select_sm align-top"
+                                                                            name="g_selected" id="g_selected"
+                                                                            style="padding-bottom:0rem; padding-top:0rem;
+                                                                            width:5rem; font-size:13px; height:1.4rem; text-align:center;">
+                                                                        <option selected>ID</option>
+                                                                        {% for i in range(1, analysis_data['grounded_table']|length + 50 ) %}
+                                                                            {% if key == i-1%}
+                                                                                <option selected value="{{ i }}">{{ i }}</option>
+                                                                            {% else %}
+                                                                                <option value="{{ i }}">{{ i }}</option>
+                                                                            {% endif %}
+                                                                        {% endfor %}
+
+                                                                    </select>
+
+                                                                </td>
+
+                                                            </tr>
+                                                        {% endfor %}
+                                                            <!-- EMPTY GROUNDED ROW -->
+                                                            <tr class="align-middle table-white"
+                                                            style="height:0rem; padding-bottom:0rem; padding-top:5rem; color:red;"
+                                                            onmouseout="ChangeColor(this, false);" onclick="ChangeColor(this, true);">
+                                                            <th scope="row"></th>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                        </tr>
+                                                    {% endfor %}
+
+                                                    <!-- GROUNDLESS TABLE ROWS -->
+                                                    <!-- display: flex; flex-wrap:rap; align-items:flex-start; justify-content:flex-start; -->
+                                                    {% set map = ({"9999":999}) %}
+                                                    {% for key, list in analysis_data['groundless_table'].items() %}
+                                                        {% for dict in list %}
+                                                            <tr class="align-middle table-secondary table-danger"
+                                                            style="height:0rem; padding-bottom:0rem; padding-top:0rem;"
+                                                            onmouseout="ChangeColor(this, false);" onclick="ChangeColor(this, true);">
+
+                                                                <th scope="row">{{loop.index}}</th>
+                                                                <td style="color:brown">
+                                                                    <input type="search" value="{{ dict['rid'] }}"
+                                                                           name="row-id-2" id="row-id-2" hidden="">
+                                                                    {%  if dict['role'] in ['--bHasMother->', '<-bHasMother--', '<-bHasFather--', '--bHasFather->', '--gHasMother->', '<-gHasMother--', '<-gHasFather--', '--gHasFather->', '<--married----', '---married--->'] %}
+                                                                        M
+                                                                    {%  elif dict['role'] in ['<-hasFather---', '<-hasMother---', '--nHasFather->', '<-nHasMother---', '--nHasMother->'] %}
+                                                                        B
+                                                                    {%  endif %}
+                                                                </td>
+                                                                <td style="color:brown">{{ dict['certificate'] }}</td>
+                                                                <td style="color:brown">{{ dict['certificateDate'] }}</td>
+                                                                <td style="color:brown">{{ dict['p_ID'] }}</td>
+                                                                <td style="color:brown">{{ dict['associationPersonID'] }}</td>
+                                                                <td style="color:brown">{{ dict['p_name'] }}</td>
+                                                                <td style="color:brown">{{ dict['role'] }}</td>
+                                                                <td style="color:brown">{{ dict['associationPersonName'] }}</td>
+                                                                <td style="color:brown">{{ dict['associated_cluster'] }}</td>
+                                                                <td style="color:brown">
+                                                                    {{ dict['rid'] }}
+                                                                </td>
+                                                                <td class="align-items-center align-self-center align-content-center d-print-flex align-middle align-text-middle"
+                                                                    style="padding-bottom:0rem; padding-top:0rem;
+                                                                    padding-left:0rem; padding-right:0rem;  justify-content:center;
+                                                                    align-items:center; height:2rem;">
+    
+                                                                    <input type="search" value="{{loop.index}}" name="idx2" id="idx2" hidden="hidden">
+    
+                                                                    <select onchange="color(this, '{{dict['rid']}}', {{ nightfall }})"
+                                                                            class="form-select form-select_sm align-top"
+                                                                            name="g-less-selected" id="g-less-selected"
+                                                                            style="padding-bottom:0rem; padding-top:0rem;
+                                                                            width:5rem; font-size:13px; height:1.4rem; text-align:center;">
+                                                                        <option value="0">Group-ID</option>
+                                                                        {% set w = loop.index %}
+                                                                        {% set y = analysis_data['grounded_table']|length %}
+                                                                        {% for i in range(1, analysis_data['grounded_table']|length + 50) %}
+                                                                            {% if i == w + y %}
+                                                                                {% if map[dict['rid']] %}
+                                                                                    <option selected value="{{ map[dict['rid']] }}">
+                                                                                        {{ map[dict['rid']] }}
+                                                                                    </option>
+                                                                                {% else %}
+                                                                                    {% set x = map.__setitem__(dict['rid'], w + y) %}
+                                                                                    <option selected value="{{ map[dict['rid']] }}">
+                                                                                        {{ map[dict['rid']] }}
+                                                                                    </option>
+                                                                                {% endif %}
+                                                                            {% else %}
+                                                                                <option value="{{ i }}">{{ i }}</option>
+                                                                            {% endif %}
+                                                                        {% endfor %}
+                                                                    </select>
+
+                                                                </td>
+                                                            </tr>
+
+                                                            <!-- EMPTY GROUNDED ROW -->
+                                                            <tr class="align-middle table-white"
+                                                            style="height:0rem; padding-bottom:0rem; padding-top:5rem; color:red;"
+                                                            onmouseout="ChangeColor(this, false);" onclick="ChangeColor(this, true);">
+                                                            <th scope="row"></th>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                        </tr>
+                                                        {% endfor %}
+                                                    {% endfor %}
+
+                                                </tbody>
+
+                                            </table>
+
+                                        </div>
+
+                                        <!-- SUBMIT BUTTON FOR WRITE AND VIEW RDF -->
+                                        {% if selected_size not in list_of_processed_sizes or
+                                        (analysis_data['grounded_table']|length == 0
+                                        and analysis_data['groundless_table']|length == 0) %}
+
+                                        <div class="row">
+
+                                            <div class="col">
+                                                <button class="btn btn-primary border-light btn-light align-top" type="submit"
+                                                        style=" height:1rem; text-align: center; padding-top:0rem;
+                                                        padding-right:1rem; padding-bottom:1rem; background-color:white;
+                                                        width:100%;" name="rdf" value="write" disabled>
+                                                    <span aria-hidden="true" class="badge rounded-pill text-bg-primary"
+                                                         style="padding-bottom:0.5rem; padding-top:0.5rem; width:100%;">
+                                                       Submit Validation
+                                                    </span>
+                                                </button>
+                                            </div>
+
+                                            <div class="col">
+                                                <button class="btn btn-primary border-light btn-light align-top" type="submit"
+                                                        style=" height:1rem; text-align: center; padding-top:0rem;
+                                                        padding-right:1rem; padding-bottom:1rem; background-color:white;
+                                                        width:100%;" name="rdf" value="merger-and-write" disabled>
+                                                    <span aria-hidden="true" class="badge rounded-pill text-bg-primary"
+                                                         style="padding-bottom:0.5rem; padding-top:0.5rem; width:100%;">
+                                                       Merge & Validate
+                                                    </span>
+                                                </button>
+                                            </div>
+
+                                            <div class="col">
+                                                <button class="btn btn-primary border-light btn-light align-top" type="submit"
+                                                        style=" height:1rem; text-align: center; padding-top:0rem;
+                                                        padding-right:1rem; padding-bottom:1rem; background-color:white;
+                                                        width:100%;" name="rdf" value="view" disabled>
+                                                    <span aria-hidden="true" class="badge rounded-pill text-bg-primary"
+                                                         style="padding-bottom:0.5rem; padding-top:0.5rem; width:100%;">
+                                                       View the validated RDF
+                                                    </span>
+                                                </button>
+                                            </div>
+
+                                        </div>
+                                        {% else %}
+                                        <div class="row">
+
+                                            <div class="col">
+                                                <button class="btn btn-primary border-light btn-light align-top" type="submit"
+                                                        style=" height:1rem; text-align: center; padding-top:0rem;
+                                                        padding-right:1rem; padding-bottom:1rem; background-color:white;
+                                                        width:100%;" name="rdf" value="write">
+                                                    <span aria-hidden="true" class="badge rounded-pill text-bg-primary"
+                                                         style="padding-bottom:0.5rem; padding-top:0.5rem; width:100%;">
+                                                       Submit Validation
+                                                    </span>
+                                                </button>
+                                            </div>
+
+                                            <div class="col">
+                                                <button class="btn btn-primary border-light btn-light align-top" type="submit"
+                                                        style=" height:1rem; text-align: center; padding-top:0rem;
+                                                        padding-right:1rem; padding-bottom:1rem; background-color:white;
+                                                        width:100%;" name="rdf" value="merger-and-write">
+                                                    <span aria-hidden="true" class="badge rounded-pill text-bg-primary"
+                                                         style="padding-bottom:0.5rem; padding-top:0.5rem; width:100%;">
+                                                       Merge & Validate
+                                                    </span>
+                                                </button>
+                                            </div>
+
+                                            <div class="col">
+                                                {% if family[(family.keys()|list)[0]][4] == 'yes' %}
+                                                    <button class="btn btn-primary border-light btn-light align-top" type="submit"
+                                                            style=" height:1rem; text-align: center; padding-top:0rem;
+                                                            padding-right:1rem; padding-bottom:1rem; background-color:white;
+                                                            width:100%;" name="rdf" value="view">
+                                                        <span aria-hidden="true" class="badge rounded-pill text-bg-primary"
+                                                             style="padding-bottom:0.5rem; padding-top:0.5rem; width:100%;">
+                                                           View the validated RDF
+                                                        </span>
+                                                    </button>
+                                                {% else %}
+                                                    <button class="btn btn-primary border-light btn-light align-top" type="submit"
+                                                            style=" height:1rem; text-align: center; padding-top:0rem;
+                                                            padding-right:1rem; padding-bottom:1rem; background-color:white;
+                                                            width:100%;" name="rdf" value="view" disabled>
+                                                        <span aria-hidden="true" class="badge rounded-pill text-bg-primary"
+                                                             style="padding-bottom:0.5rem; padding-top:0.5rem; width:100%;">
+                                                           View the validated RDF
+                                                        </span>
+                                                    </button>
+                                                {% endif %}
+                                            </div>
+
+                                        </div>
+                                        {% endif %}
+
+                                        <input type="text" value="{{ selected_size }}" name="occurrence_recon_size"
+                                               id="occurrence_recon_size" hidden="hidden">
+
+                                        <!-- TABLE LIMIT  -->
+                                        <input type="text" value="{{max_rows}}" name="occurrence_recon_table_limit"
+                                               id="occurrence_recon_table_limit" hidden="hidden">
+
+                                        <input type="text" value="{{ selected_index }}" name="occurrence_index"
+                                               id="occurrence_index" hidden="hidden">
+
+                                        <input type="search" value="{{ flag_filter }}" name="nxt_tbl_idx_filter"
+                                               id="nxt_tbl_idx_filter" hidden="hidden">
+
+                                        <!-- VALIDATED RECONSTITUTIONS  -->
+                                        <input type="search" value="{{ validated }}" name="write_validated_rdf"
+                                             id="write_validated_rdf" hidden="hidden">
+
+                                        <!-- RECONSTITUTION ID -->
+                                        <input type="search" value="{{ analysis_data['cid'] }}" name="reconstitution-id"
+                                             id="reconstitution-id" hidden>
+
+                                        <!-- NEXT PAGE  -->
+                                        <input type="text" name="write_validated_next_page" id="write_validated_next_page"
+                                               value="{{ next_page }}" aria-describedby="inputGroup-sizing-sm" hidden>
+
+                                    </div>
+
+                                </form>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+                    </div>
+
+
+                    <!-- ACCORDION ITEM 4: FAMILY THREAD -->
+                    <div class="accordion-item">
+
+                        <!-- Family : ACCORDION HEADER -->
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed " type="button" data-bs-toggle="collapse"
+                                  data-bs-target="#flush-collapse-3" aria-expanded="false" aria-controls="flush-collapse2">
+
+                                <div class="row">
+
+                                    <div class="col-auto"> <H4>Family Thread</H4> </div>
+
+                                    {% if analysis_data['cid'] %}
+                                    <div class="col-auto" style="padding-top:0.1rem;">
+                                        <span class="badge align-top align-text-top rounded-pill result"
+                                              style="padding-bottom:0.4rem; padding-top:0.4rem;
+                                              padding-left:1.5rem; padding-right:1.5rem;">
+
+                                            {{ analysis_data['cid'] }} &nbsp; is &nbsp;
+
+                                            {% if analysis_data['flag'] == "Unlikely" %}
+                                                <span class="badge align-top align-text-top  rounded-pill unlikely"
+                                                      style="padding-left:1rem; padding-right:1rem;">
+                                                    {{analysis_data['flag']}}
+                                                </span>
+
+                                            {% elif analysis_data['flag'] == "Likely" %}
+                                                <span class="badge align-top align-text-top rounded-pill likely"
+                                                      style="padding-left:1rem; padding-right:1rem;">
+                                                    {{analysis_data['flag']}}
+                                                </span>
+
+                                            {% elif analysis_data['flag'] == "Uncertain" %}
+                                                <span class="badge align-top align-text-top rounded-pill uncertain"
+                                                      style="padding-left:1rem; padding-right:1rem;">
+                                                    {{analysis_data['flag']}}
+                                                </span>
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                    {% endif %}
+
+                                </div>
+
+                            </button>
+                        </h2>
+
+
+                        <!-- VALIDATION CONSISTENCY HELPER ACCORDION BODY -->
+                        <div id="flush-collapse-3" class="accordion-collapse collapse show"
+                             data-bs-parent="#accordionFlush2">
+
+                            <div class="accordion-body">
+
+                                <!-- DESCRIPTION OF THE RULE: children with more than one paren -->
+                                <div class="card-body">
+
+                                    <!-- FAMILY DIV -->
+                                    {% if (family.keys()|list)[0]|string|length > 0 %}
+                                    <form class="row g-3"  action="validation_consistency" method="POST">
+
+
+                                        <div style="padding-left:1rem">
+
+                                        {% set keys = family.keys() | list -%}
+                                        {% set first = keys[0] -%}
+                                        {% set size = family|length -%}
+
+
+                                        <!-- 1.1 RECONSTITUTED NAME VARIANTS COUNT AND VALIDATE STATUS -->
+                                        {% if family[first][2] > 1 %}
+
+                                            <span aria-hidden="true" class="badge rounded-pill unlikely"
+                                                  style="padding-bottom:0.5rem; padding-top:0.5rem; width:10.5rem;
+                                                  padding-left:1.5rem; padding-right:1.5rem; ">
+                                                 <strong>{{ family[first][2] }} name variants  &nbsp;</strong>
+
+                                                    <span aria-hidden="true" class="badge rounded-pill uncertain"
+                                                    style="padding-bottom:0.5rem; padding-top:0.5rem;">
+                                                        {% if family[first][4] == 'yes' %}
+                                                         <strong style="font-size:12px">VALIDATED</strong>
+                                                        {% else %}
+                                                        <strong style="font-size:12px">NOT VALIDATED</strong>
+                                                        {% endif %}
+                                                    </span>
+
+                                            </span>
+                                            <br>
+
+                                        <!-- 1.2 RECONSTITUTED WITH ONE NAME VARIANTS COUNT -->
+                                        {% else %}
+
+                                            <span aria-hidden="true" class="badge rounded-pill likely"
+                                                  style="padding-bottom:0.5rem; padding-top:0.5rem; width:10.5rem;
+                                                  padding-left:1.5rem; padding-right:1.5rem;">
+                                                 <strong>{{ family[first][2] }} name variants  &nbsp;</strong>
+
+                                                <span aria-hidden="true" class="badge rounded-pill uncertain"
+                                                    style="padding-bottom:0.5rem; padding-top:0.5rem;">
+                                                        {% if family[first][4] == 'yes' %}
+                                                         <strong style="font-size:12px">VALIDATED</strong>
+                                                        {% else %}
+                                                        <strong style="font-size:12px">NOT VALIDATED</strong>
+                                                        {% endif %}
+                                                </span>
+
+                                            </span>
+                                            <br>
+
+                                        {% endif %}
+
+
+                                        <!-- RECONSTITUTED DISPLAY OF NAME VARIANTS -->
+                                        {% if family[first][1] %}
+                                            <div style="padding-left:3rem">
+                                                <strong style="color:brown; font-size:24px;">
+                                                    {{ family[first][1] }}
+                                                </strong>
+                                                <br>
+                                                ║
+                                            </div>
+                                        {% endif %}
+
+
+                                        {% for i in range(1, size) %}
+
+                                            <!-- ROLES -->
+                                            <div class="row" style="padding-left:3rem">
+                                                <div class="col-auto" >
+
+                                                    {% if i == size - 1 %}
+                                                        ╚══ <b style="color:brown; width:7rem"> {{loop.index}} - {{ family[keys[i]][0] }}</b>
+                                                    {% else %}
+                                                        ╠══ <b style="color:brown; width:7rem"> {{loop.index}} - {{ family[keys[i]][0] }}</b>
+                                                    {% endif %}
+
+                                                    {% if family[keys[i]][2] > 1 %}
+                                                    <span aria-hidden="true" class="badge rounded-pill unlikely"
+                                                              style="padding-bottom:0.2rem; padding-top:0.2rem; width:8rem;">
+                                                         {{ family[keys[i]][2] }} name variants
+                                                    </span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+
+
+                                            <!-- EMPTY ROW -->
+                                            <div class="row" style="padding-left:3rem">
+                                                {% if family[keys[i]][3] > 1 %}
+                                                    <div class="col-auto" style="width:6%;">
+                                                        {% if i == size - 1 %}
+                                                        {% else %}
+                                                        ║
+                                                        {% endif %}
+                                                    </div>
+                                                    <div class="col-auto align-top" style="overflow-x: auto; scroll; width:90%;">
+                                                        ║
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+
+
+                                            <!-- CLUSTER SIZE ROW : RECONSTITUTION OF SIZE X -->
+                                            <div class="row" style="padding-left:3rem">
+                                                {% if family[keys[i]][3] > 1 %}
+
+                                                    <!-- NAME VARIANTS EMPTY ROW -->
+                                                    <div class="col-auto" style="width:6%;">
+                                                        {% if i == size - 1 %}
+                                                        {% else %}
+                                                        ║
+                                                        {% endif %}
+                                                    </div>
+
+                                                    <!-- NAME VARIANTS  -->
+                                                    <div class="col-auto align-top" style="overflow-x: auto; scroll; width:90%;">
+                                                        ╠══ Reconstitution of size {{ family[keys[i]][3] }}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+
+
+                                            <!-- NAME VARIANTS DIV -->
+                                            <div class="row" style="padding-left:3rem">
+
+                                                <!-- NAME VARIANTS EMPTY ROW -->
+                                                <div class="col-auto" style="width:6%;">
+                                                    {% if i == size - 1 %}
+                                                    {% else %}
+                                                    ║
+                                                    {% endif %}
+                                                </div>
+
+                                                <!-- NAME VARIANTS  -->
+                                                <div class="col-auto align-top" style="overflow-x: auto; scroll; width:90%;">
+                                                    ╚══ {{ cid }} {{ family[keys[i]][1] }}
+
+                                                    <!-- BUTTON -->
+                                                    {% if 'p' not in keys[i]|string %}
+
+                                                    <!-- current cid | current role | main cis | mane name  -->
+                                                    <button class="btn btn-primary border-light btn-light align-top"
+                                                            type="submit" style=" height:1.8rem; text-align: center; padding-top:0rem;
+                                                        padding-right:1rem; padding-bottom:1rem; background-color:white;
+                                                        width:8rem%;" name="consistency-ID"
+                                                            value="{{keys[i]}} | {{ family[keys[i]][0] }} | {{ analysis_data['cid'] }} | {{ family[first][1] }}">
+
+                                                        <span aria-hidden="true" class="badge rounded-pill text-bg-primary"
+                                                              style="padding-bottom:0.3rem; padding-top:0.5rem;
+                                                              padding-left:0.2rem; padding-right:0.2rem; width:12rem">
+                                                            {{keys[i]}} &nbsp;
+                                                            {% if family[keys[i]][4] == 'yes' %}
+                                                            <span aria-hidden="true" class="badge rounded-pill likely">
+                                                                 VALIDATED
+                                                            </span>
+                                                            {% else %}
+                                                            <span aria-hidden="true" class="badge rounded-pill unlikely">
+                                                                 NOT VALIDATED
+                                                            </span>
+                                                            {% endif %}
+                                                        </span>
+
+                                                    </button>
+
+                                                    {% else %}
+                                                        <span aria-hidden="true" class="badge rounded-pill unlikely"
+                                                              style="padding-bottom:0.2rem; padding-top:0.2rem; width:6rem;">
+                                                            {{keys[i]}}
+                                                        </span>
+                                                    {% endif %}
+
+                                                </div>
+
+                                            </div>
+
+
+                                            <!-- EMPTY ROW -->
+                                            <div class="row" style="padding-left:3rem">
+                                                <div class="col-auto" style="width:5%;">
+                                                    {% if i == size - 1 %}
+                                                    {% else %}
+                                                    ║
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+
+                                        {% endfor %}
+
+                                    </div>
+                                    </form>
+                                    {% else %}
+                                    <!-- <h2>Reconstitution of size {{ family[(family.keys()|list)[0]][3] }} are not yet processed.</h2>-->
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ACCORDION ITEM 3 : VALIDATED PERSON OBSERVATION TABLE -->
+                    {% if analysis_data['validated_table'] is not none %}
+                    <div class="accordion-item">
+
+                        <!-- ACCORDION HEADER -->
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed " type="button" data-bs-toggle="collapse"
+                                  data-bs-target="#flush-collapse-5" aria-expanded="false" aria-controls="flush-collapse-5">
+
+                                <div class="row">
+
+                                    <div class="col-auto"> <H4>Validated Person Observations</H4> </div>
+
+                                    {% if analysis_data['cid'] %}
+                                    <div class="col-auto" style="padding-top:0.1rem;">
+                                    <span class="badge align-top align-text-top rounded-pill result"
+                                          style="padding-bottom:0.4rem; padding-top:0.4rem;
+                                          padding-left:1.5rem; padding-right:1.5rem;">
+
+                                        {{ analysis_data['cid'] }} &nbsp; is &nbsp;
+
+                                        {% if analysis_data['flag'] == "Unlikely" %}
+                                            <span class="badge align-top align-text-top  rounded-pill unlikely"
+                                                  style="padding-left:1rem; padding-right:1rem;">
+                                                {{analysis_data['flag']}}
+                                            </span>
+
+                                        {% elif analysis_data['flag'] == "Likely" %}
+                                            <span class="badge align-top align-text-top rounded-pill likely"
+                                                  style="padding-left:1rem; padding-right:1rem;">
+                                                {{analysis_data['flag']}}
+                                            </span>
+
+                                        {% elif analysis_data['flag'] == "Uncertain" %}
+                                            <span class="badge align-top align-text-top rounded-pill uncertain"
+                                                  style="padding-left:1rem; padding-right:1rem;">
+                                                {{analysis_data['flag']}}
+                                            </span>
+                                        {% endif %}
+                                    </span>
+                                    </div>
+                                    {% endif %}
+
+                                </div>
+
+                            </button>
+                        </h2>
+
+                        <!-- ACCORDION BODY -->
+                        <div id="flush-collapse-5" class="accordion-collapse collapse show"
+                             data-bs-parent="#accordionFlush2">
+                            <div class="accordion-body">
+
+                                <div class="card-body">
+
+                                    <!-- TABLE OF RECONSTITUTED OF A SPECIFIC SIZE -->
+                                    {% for key, list in analysis_data['validated_table'].items() %}
+
+                                        <!-- VALIDATED TABLE -->
+                                        <table class="table table-sm caption-top table-hover align-middle"
+                                           style="font-size:12px; text-align:center; position:fixed-top">
+
+                                            <!-- TABLE HEADER -->
+                                            <thead class="table-success align-text-center align-middle"
+                                                   style="font-size:16px; position:-webkit-sticky; position:sticky;
+                                                   top:0; z-index:2;">
+                                                <tr style="height:3rem;">
+                                                    <th scope="col"> </th>
+                                                    <th scope="col">E. Type</th>
+                                                    <th scope="col">Cert.</th>
+                                                    <th scope="col">Cert. Date</th>
+                                                    <th scope="col">Rec. ID</th>
+                                                    <th scope="col">Ext. Fa. ID</th>
+                                                    <th scope="col">Rec. Name</th>
+                                                    <th scope="col">Role</th>
+                                                    <th scope="col">Ext. Fa. Name</th>
+                                                    <th scope="col">Row</th>
+                                                    <th scope="col">Ext. Fa. Cluster</th>
+                                                </tr>
+                                            </thead>
+
+
+                                            <!-- TABLE BODY -->
+                                            <tbody class="table-group-divider">
+
+                                                <!-- EMPTY ROW -->
+                                                <tr class="align-middle table-white">
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                </tr>
+
+                                                <!-- GROUNDED TABLE ROWS -->
+                                                {% set outer_loop = loop %}
+                                                {% for dict in list %}
+                                                    <tr class="align-middle table-warning"
+                                                    style="height:0rem; padding-bottom:0rem; padding-top:0rem;"
+                                                    onmouseout="ChangeColor(this, false);" onclick="ChangeColor(this, true);">
+
+                                                        <th scope="row">{{loop.index}}</th>
+                                                        <td style="color:brown">
+                                                            <input type="search" class="form-control me-2" placeholder="Cluster-ID"
+                                                                 aria-label="Cluster-ID" aria-describedby="basic-addon1"
+                                                                 value="{{ dict['rid'] }}" name="row-id" id="val-row-id" hidden="">
+                                                            {%  if dict['role'] in ['--bHasMother->', '<-bHasMother--', '<-bHasFather--', '--bHasFather->', '--gHasMother->', '<-gHasMother--', '<-gHasFather--', '--gHasFather->', '<--married----', '---married--->'] %}
+                                                                M
+                                                            {%  elif dict['role'] in ['<-hasFather---', '<-hasMother---', '--nHasFather->', '<-nHasMother---', '--nHasMother->'] %}
+                                                                B
+                                                            {%  endif %}
+                                                        </td>
+                                                        <td style="color:brown">{{ dict['certificate'] }}</td>
+                                                        <td style="color:brown">{{ dict['certificateDate'] }}</td>
+                                                        <td style="color:brown">{{ dict['p_ID'] }}</td>
+                                                        <td style="color:brown">{{ dict['associationPersonID'] }}</td>
+                                                        <td style="color:brown">{{ dict['p_name'] }}</td>
+                                                        <td style="color:brown">{{ dict['role'] }}</td>
+                                                        <td style="color:brown">{{ dict['associationPersonName'] }}</td>
+                                                        <td style="color:brown">{{ dict['rid'] }}</td>
+                                                        <td style="color:brown">{{ dict['associated_cluster'] }}
+                                                        <input type="search" class="form-control me-2" placeholder="Reconstitution-ID"
+                                                            aria-label="Reconstitution-ID" aria-describedby="basic-addon1"
+                                                            style="text-align:center; width:10.5rem; padding-right:0rem"
+                                                            value="{{ dict['associated_cluster'] }}" name="reconstitution_id"
+                                                            id="associated_cluster" hidden="hidden">
+                                                        </td>
+
+                                                    </tr>
+                                                {% endfor %}
+
+                                            </tbody>
+
+                                        </table>
+
+                                        <!-- VALIDATED FAMILY THREAD -->
+                                        <div style="padding-top:1rem; padding-bottom:2rem">
+
+                                            <!-- FAMILY DIV -->
+                                            {% if (validated_family[key].keys()|list)[0]|string|length > 0 %}
+                                            {% set  family = validated_family[key] -%}
+                                            <form class="row g-3"  action="validation_consistency" method="POST">
+
+
+                                                <div style="padding-left:1rem">
+
+                                                {% set keys = family.keys() | list -%}
+                                                {% set first = keys[0] -%}
+                                                {% set size = family|length -%}
+
+
+                                                <!-- RECONSTITUTED NAME VARIANTS COUNT -->
+                                                {% if family[first][2] > 1 %}
+
+                                                    <span aria-hidden="true" class="badge rounded-pill unlikely"
+                                                          style="padding-bottom:0.5rem; padding-top:0.5rem; width:10.5rem;
+                                                          padding-left:1.5rem; padding-right:1.5rem; ">
+                                                         <strong>{{ family[first][2] }} name variants  &nbsp;</strong>
+
+                                                            <span aria-hidden="true" class="badge rounded-pill uncertain"
+                                                            style="padding-bottom:0.5rem; padding-top:0.5rem;">
+                                                                {% if family[first][4] == 'yes' %}
+                                                                 <strong style="font-size:12px">VALIDATED</strong>
+                                                                {% else %}
+                                                                <strong style="font-size:12px">NOT VALIDATED</strong>
+                                                                {% endif %}
+                                                            </span>
+
+                                                    </span>
+                                                    <br>
+
+                                                <!-- RECONSTITUTED WITH MORE THAN ONE NAME VARIANTS-->
+                                                {% else %}
+
+                                                    <span aria-hidden="true" class="badge rounded-pill likely"
+                                                          style="padding-bottom:0.5rem; padding-top:0.5rem; width:10.5rem;
+                                                          padding-left:1.5rem; padding-right:1.5rem;">
+                                                         <strong>{{ family[first][2] }} name variants  &nbsp;</strong>
+
+                                                        <span aria-hidden="true" class="badge rounded-pill uncertain"
+                                                            style="padding-bottom:0.5rem; padding-top:0.5rem;">
+                                                                {% if family[first][4] == 'yes' %}
+                                                                 <strong style="font-size:12px">VALIDATED</strong>
+                                                                {% else %}
+                                                                <strong style="font-size:12px">NOT VALIDATED</strong>
+                                                                {% endif %}
+                                                        </span>
+
+                                                    </span>
+                                                    <br>
+
+                                                {% endif %}
+
+
+                                                <!-- RECONSTITUTED NAME VARIANTS -->
+                                                {% if family[first][1] %}
+                                                    <div style="padding-left:3rem">
+                                                        <strong style="color:brown; font-size:24px;">
+                                                            {{ family[first][1] }}
+                                                        </strong>
+                                                        <br>
+                                                        ║
+                                                    </div>
+                                                {% endif %}
+
+
+                                                {% for i in range(1, size) %}
+
+                                                    <!-- ROLES -->
+                                                    <div class="row" style="padding-left:3rem">
+                                                        <div class="col-auto" >
+                                                            {% if i == size - 1 %}
+                                                                ╚══ <b style="color:brown; width:7rem"> {{loop.index}} - {{ family[keys[i]][0] }}</b>
+                                                            {% else %}
+                                                                ╠══ <b style="color:brown; width:7rem"> {{loop.index}} - {{ family[keys[i]][0] }}</b>
+                                                            {% endif %}
+                                                            {% if family[keys[i]][2] > 1 %}
+                                                            <span aria-hidden="true" class="badge rounded-pill unlikely"
+                                                                      style="padding-bottom:0.2rem; padding-top:0.2rem; width:8rem;">
+                                                                 {{ family[keys[i]][2] }} name variants
+                                                            </span>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+
+                                                    {% if family[keys[i]][3] > 1 %}
+
+                                                        <!-- EMPTY ROW -->
+                                                        <div class="row" style="padding-left:3rem">
+
+                                                            <div class="col-auto" style="width:6%;">
+                                                                {% if i == size - 1 %}
+                                                                {% else %}
+                                                                ║
+                                                                {% endif %}
+                                                            </div>
+                                                            <div class="col-auto align-top" style="overflow-x: auto; scroll; width:90%;">
+                                                                ║
+                                                            </div>
+                                                        </div>
+
+
+                                                        <!-- CLUSTER SIZE ROW -->
+                                                        <div class="row" style="padding-left:3rem">
+                                                            {% if family[keys[i]][3] > 1 %}
+
+                                                                <!-- NAME VARIANTS EMPTY ROW -->
+                                                                <div class="col-auto" style="width:6%;">
+                                                                    {% if i == size - 1 %}
+                                                                    {% else %}
+                                                                    ║
+                                                                    {% endif %}
+                                                                </div>
+
+                                                                <!-- NAME VARIANTS  -->
+                                                                <div class="col-auto align-top" style="overflow-x: auto; scroll; width:90%;">
+                                                                    ╠══ Reconstitution of size {{ family[keys[i]][3] }}
+                                                                </div>
+
+                                                            {% endif %}
+                                                        </div>
+
+                                                    {% endif %}
+
+                                                    <!-- NAME VARIANTS DIV -->
+                                                    <div class="row" style="padding-left:3rem">
+
+                                                        <!-- NAME VARIANTS EMPTY ROW -->
+                                                        <div class="col-auto" style="width:6%;">
+                                                            {% if i == size - 1 %}
+                                                            {% else %}
+                                                            ║
+                                                            {% endif %}
+                                                        </div>
+
+                                                        <!-- NAME VARIANTS  -->
+                                                        <div class="col-auto align-top" style="overflow-x: auto; scroll; width:90%;">
+                                                            ╚══ {{ cid }} {{ family[keys[i]][1] }}
+
+                                                            <!-- BUTTON -->
+                                                            {% if 'p' not in keys[i]|string %}
+                                                            <button class="btn btn-primary border-light btn-light align-top" type="submit"
+                                                                     style=" height:1.8rem; text-align: center; padding-top:0rem;
+                                                                padding-right:1rem; padding-bottom:1rem; background-color:white;
+                                                                width:8rem%;" name="consistency-ID"
+                                                                    value="{{keys[i]}} | {{ family[keys[i]][0] }} | {{ analysis_data['cid'] }} | {{ family[first][1] }}"
+                                                            >
+                                                                <span aria-hidden="true" class="badge rounded-pill text-bg-primary"
+                                                                      style="padding-bottom:0.3rem; padding-top:0.5rem;
+                                                                      padding-left:0.2rem; padding-right:0.2rem; width:12rem">
+                                                                    {{keys[i]}} &nbsp;
+                                                                    {% if family[keys[i]][4] == 'yes' %}
+                                                                    <span aria-hidden="true" class="badge rounded-pill likely">
+                                                                         VALIDATED
+                                                                    </span>
+                                                                    {% else %}
+                                                                    <span aria-hidden="true" class="badge rounded-pill unlikely">
+                                                                         NOT VALIDATED
+                                                                    </span>
+                                                                    {% endif %}
+                                                                </span>
+                                                            </button>
+                                                            {% else %}
+                                                                <span aria-hidden="true" class="badge rounded-pill unlikely"
+                                                                      style="padding-bottom:0.2rem; padding-top:0.2rem; width:6rem;">
+                                                                    {{keys[i]}}
+                                                                </span>
+                                                            {% endif %}
+
+                                                        </div>
+
+                                                    </div>
+
+
+                                                    <!-- EMPTY ROW -->
+                                                    <div class="row" style="padding-left:3rem">
+                                                        <div class="col-auto" style="width:5%;">
+                                                            {% if i == size - 1 %}
+                                                            {% else %}
+                                                            ║
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+
+                                                {% endfor %}
+
+                                            </div>
+                                            </form>
+                                            {% else %}
+                                            {% endif %}
+
+                                        </div>
+
+                                    {% endfor %}
+
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                    {% endif %}
+
+
+                    <!-- ACCORDION ITEM 5 : SUBMITTED RDF-->
+                    {% if rdf_data|length > 0 %}
+                        <div class="accordion-item">
+
+                            <!-- ACCORDION HEADER -->
+                            <h2 class="accordion-header  text-align:middle">
+
+                                <!-- Submitted RDF LABEL -->
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                      data-bs-target="#flush-collapse3" aria-expanded="false" aria-controls="flush-collapse3">
+
+
+
+                                    <div class="row">
+
+                                    <div class="col-auto"> <H4>Submitted RDF </H4> </div>
+
+                                    {% if analysis_data['cid'] %}
+                                    <div class="col-auto" style="padding-top:0.1rem;">
+                                        <span class="badge align-top align-text-top rounded-pill result"
+                                              style="padding-bottom:0.4rem; padding-top:0.4rem;
+                                              padding-left:1.5rem; padding-right:1.5rem;">
+
+                                            {{ analysis_data['cid'] }} &nbsp; is &nbsp;
+
+                                            {% if analysis_data['flag'] == "Unlikely" %}
+                                                <span class="badge align-top align-text-top  rounded-pill unlikely"
+                                                      style="padding-left:1rem; padding-right:1rem;">
+                                                    {{analysis_data['flag']}}
+                                                </span>
+
+                                            {% elif analysis_data['flag'] == "Likely" %}
+                                                <span class="badge align-top align-text-top rounded-pill likely"
+                                                      style="padding-left:1rem; padding-right:1rem;">
+                                                    {{analysis_data['flag']}}
+                                                </span>
+
+                                            {% elif analysis_data['flag'] == "Uncertain" %}
+                                                <span class="badge align-top align-text-top rounded-pill uncertain"
+                                                      style="padding-left:1rem; padding-right:1rem;">
+                                                    {{analysis_data['flag']}}
+                                                </span>
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                    {% endif %}
+
+                                </div>
+
+
+                                </button>
+
+                            </h2>
+
+                            <!-- ACCORDION BODY -->
+                            <div id="flush-collapse3" class="accordion-collapse collapse {{show}}"
+                                 data-bs-parent="#accordionFlush2">
+
+                                <!-- CONFIRMATION AND CANCELLATION BUTTONS -->
+                                <div class="col input-group text-align:end" style="padding-top:2.5rem; padding-bottom:0rem;">
+
+                                    <!-- CANCELLATION FORM -->
+                                    <form class="row g-3"  action="cancel_manual_validation" method="POST">
+                                        <div class="row" style="padding-right:0rem;">
+
+                                            <div class="col-sm-6 mb-3 mb-sm-0 text-middle"
+                                                 style="width:100%;  text-align:end;
+                                                 padding-bottom:0.8rem; padding-right:0rem;">
+
+                                                <!-- VALIDATED RDF DATA -->
+                                                <input type="search" value="{{rdf_data}}"
+                                                    name="cancel_rdf" id="cancel_rdf" hidden="">
+
+                                                <!-- FILTER FLAG -->
+                                                <input type="search" value="{{ flag_filter }}"
+                                                       name="cancel_validation_flag_filter"
+                                                       id="cancel_validation_flag_filter" hidden>
+
+                                                <!-- SELECTED CLUSTER SIZE  -->
+                                                <input type="search" value="{{ selected_size }}" hidden="hidden"
+                                                       name="cancel_validation_cs" id="cancel_validation_cs">
+
+                                                <!--  NEXT PAGE -->
+                                                <input type="text" name="cancel_validation_next_page" hidden
+                                                       id="cancel_validation_next_page" value="{{ next_page }}">
+
+                                                <!--  SELECTED RECONSTITUTED TABLE INDEX -->
+                                                <input type="search" value="{{selected_index}}"
+                                                       name="cancel_validation_selected_index"
+                                                       id="cancel_validation_selected_index" hidden=>
+
+                                                <!-- CLUSTER ID  -->
+                                                <input type="search" value="{{ analysis_data['cid'] }}"
+                                                       name="cancel_validation_reconstitution_id"
+                                                       id="cancel_validation_reconstitution_id" hidden>
+
+                                                <!-- VALIDATED RECONSTITUTIONS  -->
+                                                <input type="search" value="{{ validated }}" name="cancel_validated_rdf"
+                                                       id="cancel_validated_rdf" hidden="hidden">
+
+                                                <!-- CANCELLATION BUTTON -->
+                                                <button class="btn btn-primary border-light btn-light align-top" type="submit"
+                                                    style=" height:1rem; text-align: center; padding-top:0rem; padding-right:0rem;
+                                                           padding-bottom:1rem; background-color:white">
+
+                                                <h4>
+                                                <span aria-hidden="true" class="badge rounded-pill text-bg-danger"
+                                                    style="padding-right:0rem;  padding-top:0.4rem;">
+                                                    CANCEL the validation of
+                                                    <span aria-hidden="true" class="badge rounded-pill text-bg-dark" >
+                                                    {{ analysis_data['cid'] }}
+                                                    </span>
+                                                </span>
+                                                </h4>
+
+                                                  </button>
+
+                                            </div>
+
+                                        </div>
+                                    </form>
+
+                                </div>
+
+
+                                <pre style="padding-left:2rem; font:courier">
+                                    {{rdf_data}}
+                                </pre>
+
+                            </div>
+
+                        </div>
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+    <p></p>
+
+
+    <!-- 3. INFO ON FLAG STATS AND EVALUATION RULES-->
+    <div class="card">
+
+        <div class="card-body">
+
+            <div class="accordion accordion-flush" id="accordionFlushInfo">
+
+                <!-- 1. EVALUATION RULES-->
+                <div class="accordion-item">
+
+                    <!-- ACCORDION HEADER -->
+                    <h2 class="accordion-header">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                              data-bs-target="#flush-collapse-One" aria-expanded="false"
+                              aria-controls="flush-collapse-One">
+                        <h3>Evaluation Rules</h3>
+                      </button>
+                    </h2>
+
+                    <!-- ACCORDION BODY -->
+                    <div id="flush-collapse-One" class="accordion-collapse collapse"
+                         data-bs-parent="#accordionFlushInfo">
+
+                        <div class="accordion-body">
+
+                            <!-- 5. EVALUATION RULES  -->
+                            <div class="row">
+
+                            <!--  SOFT RULES  -->
+                            <div class="col-sm-6">
+                                <div class="card border-primary mb-3 h-100">
+
+                                    <div class="card-body"  style="text-align: justify; padding-bottom:0rem;">
+
+                                        <h5 class="card-title"> ⚠️ Soft Rules  </h5>
+
+                                        <ul class="list-group-numbered">
+
+                                            <!-- 1 -->
+                                            <li class="list-group-item">A person is unlikely to have
+                                              more than 20 <span style="color:brown;">children</span>.</li>
+
+                                            <!-- 2 -->
+                                            <li class="list-group-item">
+                                                A person is unlikely to <span style="color:brown;">marry</span> more than 5 times.</li>
+
+                                            <!-- 3 -->
+                                            <li class="list-group-item">
+                                                A person should not have more <span style="color:brown;">married children</span> than children. </li>
+
+                                            <!-- 4 -->
+                                            <li class="list-group-item">
+                                                A person should not have <span style="color:brown;">divorced</span> more than they got married.</li>
+
+                                            <!-- 5 -->
+                                            <li class="list-group-item">
+                                              <span style="color:brown;">Consecutive children</span> are unlikely to be more than 10 years apart. </li>
+
+                                            <!-- 6-->
+                                            <li class="list-group-item">A person should not
+                                               <span style="color:brown;">appear with the same person</span> only once (groundless).</li>
+
+                                            <!-- 7 -->
+                                            <li class="list-group-item">
+                                                 The number of <span style="color:brown;">grounded reconstituted subgroups</span>
+                                                - where the reconstituted individual appears with the same person at least twice -
+                                                should not exceed the number of children plus one.
+                                            </li>
+
+                                            <!-- 8 -->
+                                            <li class="list-group-item">
+                                                A person should not have more <span style="color:brown;">groundless observations</span>
+                                                than a third of its reconstitution size. </li>
+
+                                        </ul>
+
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <!--  HARD RULES  -->
+                            <div class="col-sm-6 mb-3 mb-sm-0" style="text-align: justify">
+
+                                <div class="card border-primary mb-3 h-100">
+
+                                    <div class="card-body" style="text-align: justify; padding-bottom:0rem;">
+
+                                        <h5 class="card-title"> ❌ Hard Rules  </h5>
+
+                                        <ul class="list-group-numbered">
+
+                                            <li class="list-group-item">
+                                              A person cannot be <span style="color:brown;">born</span> more than once. </li>
+
+                                            <li class="list-group-item">
+                                              A person's <span style="color:brown;">children</span> cannot be born more than once. </li>
+
+                                            <li class="list-group-item">
+                                              A woman is very unlikely to <span style="color:brown;">marry</span> before the age of 13. </li>
+
+
+                                            <li class="list-group-item">
+                                              A mother is very unlikely to <span style="color:brown;">give birth</span> past the age of 50. </li>
+
+                                            <li class="list-group-item">
+                                              A person should not break more than two <span style="color:brown;">soft rules</span>. </li>
+
+                                            <li class="list-group-item">
+                                              A person should have at most one <span style="color:brown;">father or mother</span>. <br>
+                                              &nbsp;  &nbsp; A person cannot be <span style="color:brown;">known and unknown</span> at the same time.
+                                            </li>
+                                            <li class="list-group-item">
+                                              The <span style="color:brown;">first and last child</span> of a mother are very unlikely
+                                              to be more than 30 years apart.
+                                            </li>
+                                </ul>
+
+
+
+
+
+                              </div>
+
+                                </div>
+                            </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- 2. STATS -->
+                <div class="accordion-item">
+
+                    <!-- ACCORDION HEADER -->
+                    <h2 class="accordion-header">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                              data-bs-target="#flush-collapse-Two" aria-expanded="false"
+                              aria-controls="flush-collapse-Two">
+                        <h3>Evaluation Statistics</h3>
+                      </button>
+                    </h2>
+
+                    <!-- ACCORDION BODY -->
+                    <div id="flush-collapse-Two" class="accordion-collapse collapse"
+                         data-bs-parent="#accordionFlushInfo">
+
+                        <div class="accordion-body">
+
+                            <!-- 2. FLAG STATS -->
+                            <div class="card">
+                                <div class="card-body" style="padding-left:2rem; padding-right:2rem;">
+
+                                    <!-- HEADER -->
+                                    <div class="row" style="text-align:justify; padding-top:0rem; padding-bottom:0rem;">
+
+                        <!-- CURRENT STATS -->
+                        <div class="col">
+                            <span aria-hidden="true" class="badge rounded-pill text-bg-light align-middle"
+                                    style="padding-left:1rem; padding-right:1rem; width:17rem">
+                            </span>
+                        </div>
+
+                        <!-- LIKELY-S -->
+                        <div class="col" style="text-align:right; width:11rem">
+                            <span class="badge rounded-pill text-bg-light" style="width:11rem; font-size:1rem; background:white; color:black;">
+                                WITHOUT WARNING
+                            </span>
+                         </div>
+
+                        <!-- LIKELY -->
+                        <div class="col" style="text-align:right;">
+                            <span class="badge rounded-pill text-bg-light" style="width:11rem; font-size:1rem; background:white; color:black;">
+                                WITH WARNING
+                            </span>
+                        </div>
+
+                        <!-- UNCERTAIN -->
+                        <div class="col" style="text-align:right;">
+                            <span class="badge rounded-pill text-bg-light" style="width:11rem; font-size:1rem; background:white; color:black;">
+                                UNCERTAIN
+                            </span>
+                        </div>
+
+                        <!-- UNLIKELY -->
+                        <div class="col" style="text-align:right;">
+                            <span class="badge rounded-pill " style="width:11rem; font-size:1rem; background:white; color:black;">
+                                UNLIKELY
+                            </span>
+                        </div>
+
+                    </div>
+
+                                    <hr>
+
+                                    <!-- CURRENT STATS -->
+                                    <div class="row" style="text-align:justify; padding-top:0rem; padding-bottom:0rem;">
+
+                                        <!-- CURRENT STATS -->
+                                        <div class="col">
+                                              <span aria-hidden="true" class="badge rounded-pill text-bg-secondary align-middle"
+                                                    style="padding-left:1rem; padding-right:1rem; width:17rem">
+                                                  CURRENT : {{likely['full_size']}}
+                                            </span>
+                                        </div>
+
+                                        <!-- LIKELY-S -->
+                                        <div class="col" style="text-align:right;">
+                                            <span aria-hidden="true" class="badge rounded-pill align-middle likely"
+                                                  style="width:11rem">
+                                                 {{ likely['percentage_likely_s'] }}%
+                                            </span>
+
+                                        </div>
+
+                                        <!-- LIKELY -->
+                                        <div class="col" style="text-align:right;">
+                                            <span aria-hidden="true" class="badge rounded-pill align-middle likely"
+                                                  style="width:11rem">
+                                                {{ likely['percentage_likely'] }}%
+                                            </span>
+
+                                        </div>
+
+                                        <!-- UNCERTAIN -->
+                                        <div class="col" style="text-align:right;">
+                                             <span aria-hidden="true" class="badge rounded-pill align-middle uncertain"
+                                                  style="width:11rem">
+                                                 {{ likely['percentage_uncertain'] }}%
+                                            </span>
+
+                                        </div>
+
+                                        <!-- UNLIKELY -->
+                                        <div class="col" style="text-align:right;">
+                                             <span aria-hidden="true" class="badge rounded-pill align-middle unlikely"
+                                                  style="padding-left:1rem; padding-right:1rem; width:11rem">
+                                                 {{ likely['percentage_unlikely'] }}%
+                                            </span>
+                                        </div>
+
+                                    </div>
+
+                                    <hr>
+
+                                    <!-- OVERALL STATS -->
+                                    <div class="row " style="text-align:justify; padding-top:0rem; padding-bottom:0rem;">
+
+                                        <!-- OVERALL STATS  -->
+                                        <div class="col">
+                                              <span aria-hidden="true" class="badge rounded-pill text-bg-secondary align-middle"
+                                                  style="padding-left:0.6rem; padding-right:0.6rem; width:17rem">
+                                                  OVERALL : {{overall_stats['full_size']}}
+                                            </span>
+                                        </div>
+
+                                        <!-- LIKELY-S -->
+                                        <div class="col" style="text-align:right;">
+                                            <span aria-hidden="true" class="badge rounded-pill align-middle likely"
+                                                  style="width:11rem">
+                                                 {{ overall_stats['percentage_likely_s'] }}%
+                                            </span>
+                                        </div>
+
+                                        <!-- LIKELY -->
+                                        <div class="col" style="text-align:right;">
+                                            <span aria-hidden="true" class="badge rounded-pill align-middle likely"
+                                                  style="width:11rem">
+                                                 {{ overall_stats['percentage_likely'] }}%
+                                            </span>
+                                        </div>
+
+                                        <!-- UNCERTAIN -->
+                                        <div class="col" style="text-align:right;">
+                                             <span aria-hidden="true" class="badge rounded-pill align-middle uncertain"
+                                                  style="width:11rem">
+                                                 {{ overall_stats['percentage_uncertain'] }}%
+                                            </span>
+                                        </div>
+
+                                        <!-- UNLIKELY -->
+                                        <div class="col" style="text-align:right;">
+                                             <span aria-hidden="true" class="badge rounded-pill align-middle unlikely"
+                                                  style="width:11rem">
+                                                 {{ overall_stats['percentage_unlikely'] }}%
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- 3. VALIDATIONS -->
+                <div class="accordion-item">
+
+                    <!-- ACCORDION HEADER -->
+                    <h2 class="accordion-header">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                              data-bs-target="#flush-collapse-Three" aria-expanded="false"
+                              aria-controls="flush-collapse-Two">
+                        <h3>Evaluation Batch-Validation</h3>
+                      </button>
+                    </h2>
+
+                    <!-- ACCORDION BODY -->
+                    <div id="flush-collapse-Three" class="accordion-collapse collapse"
+                         data-bs-parent="#accordionFlushInfo">
+
+                        <div class="accordion-body">
+
+                            <!-- FILTERS -->
+                            <form class="g-3"  action="batch_validations" method="POST" >
+
+
+                                <!-- INPUTS -->
+                                <div>
+                                    <input type="search" class="form-control me-2"
+                                    value="{% if selected_size > 0 %} {{selected_size}} {% else %} {% endif %}"
+                                    name="validation_cluster_size" id="validation_cluster_size" hidden="hidden">
+
+                                    <!-- TABLE LIMIT -->
+                                    <input type="search" class="form-control me-2"
+                                    value="{% if selected_size > 0 %} {{selected_size}} {% else %} {% endif %}"
+                                    name="validation_cluster_table_limit" id="validation_cluster_table_limit" hidden="hidden">
+
+                                    <input type="search" class="form-control me-2"
+                                        value="{{ analysis_data['cid'] }}" name="validation_reconstitution-id"
+                                        id="validation_reconstitution-id" hidden="hidden">
+
+                                    <input type="text" class="form-control me-2"
+                                        value="{{ selected_index }}" name="validation_occurrence_index"
+                                        id="validation_occurrence_index" hidden="hidden">
+
+                                    <!-- NEXT PAGE  -->
+                                    <input type="text" class="form-control" aria-label="Sizing example input"
+                                           name="validation_next_page" id="validation_next_page"
+                                           value="{{ next_page }}" aria-describedby="inputGroup-sizing-sm" hidden="">
+
+                                    <!-- PROCESS SIZES -->
+                                    <input type="text" class="form-control" aria-label="Sizing example input"
+                                           name="validation_processed_sizes" id="validation_processed_sizes"
+                                           value="{{ processed_sizes }}" aria-describedby="inputGroup-sizing-sm" hidden="">
+                                </div>
+
+
+                                <!-- VALIDATION TYPE SUBMISSION -->
+                                <div class="row-auto text-end justify-content-end"  style="padding-top: 2rem;">
+
+                                    <div class="col-auto" style="width:30%"> </div>
+
+                                    <div class="col-auto input-group input-group-sm mb-3 text-end justify-content-end"
+                                         style="padding-right:1rem;">
+
+
+                                        <!-- VALIDATION OR RESET -->
+                                        <span class="input-group-text likely" id="Batch-Validation-Task"
+                                              STYLE="HEIGHT:3REM">
+
+                                            <strong style="width:8rem"> Validation Task </strong>
+                                            <select class="form-select form-select-sm" aria-label="Default select example"
+                                                style="text-align:center; width:9rem;" name="Batch-Validation-Task">
+
+                                                    <option value="ignore"> Ignore </option>
+                                                    <option value="validate"> Validate </option>
+                                                    <option value="reset"> Reset </option>
+
+                                            </select>
+                                        </span>
+
+
+                                        <!-- VALIDATION FLAG FILTERS -->
+                                        <span class="input-group-text likely" id="Val-Flag-Filters" STYLE="HEIGHT:3REM">
+
+                                            <strong style="width:4rem">  Flag </strong>
+                                            <select class="form-select form-select-sm" aria-label="Default select example"
+                                                style="text-align:center; width:14rem" name="Batch-Filter-Flags">
+
+                                                <option value="All">All</option>
+                                                <option value="Unlikely">Unlikely</option>
+                                                <option value="Uncertain">Uncertain</option>
+                                                <option value="Likely">Likely with warning</option>
+                                                <option value="Likely-Star">Likely without warning</option>
+
+                                            </select>
+
+                                        </span>
+
+
+                                        <!-- TABLE LIMIT -->
+                                        <span class="input-group-text likely" STYLE="HEIGHT:3REM">
+
+                                            <strong style="width:4rem"> Size </strong>
+                                            <select class="form-select form-select-sm" aria-label="Default select example"
+                                                style="text-align:center; width:14rem" name="Batch-Filter-Size">
+
+                                                <option value="ignore">Ignore</option>
+                                                <option value="current-size">Current size {{selected_size}} </option>
+                                                <option value="all-sizes">All sizes</option>
+
+                                            </select>
+
+                                        </span>
+
+                                        <!-- SUBMIT BOTTOM -->
+                                        <button class="btn btn-primary border-light btn-light align-top" type="submit"
+                                        STYLE="PADDING-TOP:0.5REM; padding-left:2rem; background-color:white;">
+                                            <h5>
+                                                <span aria-hidden="true" class="badge rounded-pill text-bg-primary"
+                                                     style="padding-right:1.5rem; padding-left:1.5rem;
+                                                     padding-top:0.5rem; padding-BOTTOM:0.6rem;">
+                                                   Submit
+                                                </span>
+                                            </h5>
+                                        </button>
+
+                                    </div>
+
+                                </div>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <p style="padding-top:1rem;"></p>
+
+
+    <!--
+     ------------------------------------------------------------------------------------------------------
+     ------------------------------------------------------------------------------------------------------
+     -->
+
+
+    <!--TITLE -->
+    <div class="row text-end" style="padding-top:1rem;">
+
+    <div class="col-auto ">
+        <h1 style="text-align: center; color: #C4A484; padding-bottom:1rem;
+            font-family:Audiowide, Fantasy; font-weight:bold;">
+            <a class="navbar-brand" href="{{ url_for('index')}}" style=";"> C2RC </a>
+        </h1>
+    </div>
+
+    <div class=" input-group col-auto text-end justify-content-end align-bottom"
+         style="width:72%; padding-top:0.5rem; text-align:right;">
+
+            <h3 style="color: #C4A484; padding-bottom:1rem;
+                font-family:Audiowide, Fantasy; font-weight: bold;">
+                    SELECTED DATABASE &nbsp;
+            </h3>
+
+    </div>
+
+    <div class=" input-group col-auto text-end justify-content-end align-bottom"
+         style="width:15.2%; padding-top:0.3rem; text-align:right;">
+
+            <h3 style="color: #C4A484; padding-bottom:1rem; font-family:Audiowide, Fantasy; font-weight: bold;">
+                    <span class="badge rounded-pill text-bg-info" style="padding-left:2rem; padding-right:2rem;
+                    padding-bottom:0.5rem; padding-top:0.5rem; font-family:Helvetica, 'Brush Script', Fantasy">
+                        {%if response['db']|length > 0 %} {{ response['selected_db_name'] }} {%else%} None {%endif%}
+                    </span>
+            </h3>
+
+
+    </div>
+
+</div>
+
+
+    <!-- THE END  -->
+    <p style="padding-top:7rem;"></p>
+
+
+    <!--script-->
+    <script>
+
+        function clearBox(elementID) {
+            document.getElementById(elementID).innerHTML = "PROCESSING...";
+        } ;
+
+        function color(selected, cycleRow, colorScheme) {
+
+            var brush = colorScheme[selected.value % 10] ;
+            selected.style.backgroundColor = brush ;
+            var table = document.getElementById("observations") ;
+
+            for (var r = 1; r < table.rows.length; r++)
+            {
+                if(table.rows[r].cells[10].innerText === cycleRow)
+                {
+                    var found = table.rows[r].cells[11].querySelectorAll('select')[0] ;
+                    found.value = selected.value ;
+                    found.style.backgroundColor = brush ;
+                 }
+            }
+        } ;
+
+        function ChangeColor(tableRow, highLight)
+        {
+            if (highLight)
+            {
+              tableRow.style.backgroundColor = '#dcfac9';
+            }
+            else
+            {
+              tableRow.style.backgroundColor = 'white';
+            }
+        } ;
+
+        function change_Color2(event) {
+          var red = document.getElementById(red);
+          var green = document.getElementById(green);
+          var blue = document.getElementById(blue);
+            red.style.color = "red";
+        };
+
+    </script>
+
+
+    <script>
+
+        // Query the table
+        const table = document.getElementById('table');
+
+        //=== MOUSE HANDLER ============================================================
+        const mouseDownHandler = function(e) {
+            ...
+
+            // Attach the listeners to `document`
+            document.addEventListener('mousemove', mouseMoveHandler);
+            document.addEventListener('mouseup', mouseUpHandler);
+        };
+
+        const mouseDownHandler = function (e) {
+            // Get the original row
+            const originalRow = e.target.parentNode;
+            draggingRowIndex = [].slice.call(table.querySelectorAll('tr')).indexOf(originalRow);
+        };
+
+        //=== MOUSE MOVE HANDLER ========================================================
+        let isDraggingStarted = false;
+        const mouseMoveHandler = function(e) {
+            if (!isDraggingStarted) {
+                isDraggingStarted = true;
+
+                cloneTable();
+
+                // Query the dragging element
+                draggingEle = [].slice.call(list.children)[draggingRowIndex];
+            }
+            ...
+        };
+
+        //=== MOUSE UP HANDLER ==========================================================
+        const mouseUpHandler = function() {
+
+            // Get the end index
+            const endRowIndex = [].slice.call(list.children).indexOf(draggingEle);
+
+            // Remove the handlers of `mousemove` and `mouseup`
+            document.removeEventListener('mousemove', mouseMoveHandler);
+            document.removeEventListener('mouseup', mouseUpHandler);
+
+            // Move the dragged row to `endRowIndex`
+            let rows = [].slice.call(table.querySelectorAll('tr'));
+            draggingRowIndex > endRowIndex
+                ? // User drops to the top
+                  rows[endRowIndex].parentNode.insertBefore(rows[draggingRowIndex], rows[endRowIndex])
+                : // User drops to the bottom
+                  rows[endRowIndex].parentNode.insertBefore(rows[draggingRowIndex], rows[endRowIndex].nextSibling);
+        };
+
+        // Query all rows
+        table.querySelectorAll('tr').forEach(function(row, index) {
+            // Ignore the header
+            // We don't want user to change the order of header
+            if (index === 0) {
+                return;
+            }
+
+            // Get the first cell of row
+            const firstCell = row.firstElementChild;
+            firstCell.classList.add('draggable');
+
+            // Attach event handler
+            firstCell.addEventListener('mousedown', mouseDownHandler);
+        });
+
+        //=== TABLE CLONE ================================================================
+        let list;
+        const cloneTable = function () {
+            // Get the bounding rectangle of table
+            const rect = table.getBoundingClientRect();
+
+            // Get the width of table
+            const width = parseInt(window.getComputedStyle(table).width);
+
+            // Create new element
+            list = document.createElement('div');
+
+            // Set the same position as table
+            list.style.position = 'absolute';
+            list.style.left = `${rect.left}px`;
+            list.style.top = `${rect.top}px`;
+
+            // Insert it before the table
+            table.parentNode.insertBefore(list, table);
+
+            // Hide the table
+            table.style.visibility = 'hidden';
+
+            // Loop over the rows
+            table.querySelectorAll('tr').forEach(function(row) {
+                const item = document.createElement('div');
+
+                const newTable = document.createElement('table');
+                const newRow = document.createElement('tr');
+
+                // Query the cells of row
+                const cells = [].slice.call(row.children);
+                cells.forEach(function(cell) {
+                    const newCell = cell.cloneNode(true);
+                    newRow.appendChild(newCell);
+                });
+
+                newTable.appendChild(newRow);
+                item.appendChild(newTable);
+
+                list.appendChild(item);
+            });
+        };
+
+        cells.forEach(function (cell) {
+            const newCell = cell.cloneNode(true);
+            // Set the width as the original cell
+            newCell.style.width = `${parseInt(window.getComputedStyle(cell).width)}px`;
+            newRow.appendChild(newCell);
+        });
+
+    </script>
+
+    <script type="text/javascript">
+      function resizeIframe(obj){
+         obj.style.height = 0;
+         obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';
+      }
+
+        const alertPlaceholder = document.getElementById('liveAlertPlaceholder')
+
+        const alert = (message, type) => {
+          const wrapper = document.createElement('div')
+          wrapper.innerHTML = [
+            `<div class="alert alert-${type} alert-dismissible" role="alert">`,
+            `   <div>${message}</div>`,
+            '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+            '</div>'
+          ].join('')
+
+          alertPlaceholder.append(wrapper)
+        }
+
+        const alertTrigger = document.getElementById('liveAlertBtn')
+        if (alertTrigger) {
+          alertTrigger.addEventListener('click', () => {
+            alert('Nice, you triggered this alert message!', 'success')
+          })
+        }
+    </script>
+
+    <script type="text/javascript">
+    function seeColor() {
+            document.color = red;
+    }
+    </script>
+
+
+{% endblock %}
+<!--table.rows[r].cells[2].style.backgroundColor = "#44AA99";-->
+<!--table.rows[r].cells[2].innerHTML = selected.value;-->
+<!--table.rows[r].cells[2].innerHTML = table.rows[r].cells[11].find("select").val();-->
+
+

@@ -1,0 +1,332 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <!--TITLE -->
+    <div class="row text-end" style="padding-top:1rem;">
+
+        <div class="col-auto ">
+            <h1 style="text-align: center; color: #C4A484; padding-bottom:1rem;
+                font-family:Audiowide, Fantasy; font-weight:bold;">
+                <a class="navbar-brand" href="{{ url_for('index')}}" style=";"> C2RC </a>
+            </h1>
+        </div>
+
+        <div class=" input-group col-auto text-end justify-content-end align-bottom"
+             style="width:72%; padding-top:0.5rem; text-align:right;">
+
+                <h3 style="color: #C4A484; padding-bottom:1rem;
+                    font-family:Audiowide, Fantasy; font-weight: bold;">
+                        SELECTED DATABASE &nbsp;
+                </h3>
+
+        </div>
+
+        <div class=" input-group col-auto text-end justify-content-end align-bottom"
+             style="width:15.2%; padding-top:0.3rem; text-align:right;">
+
+                <h3 style="color: #C4A484; padding-bottom:1rem; font-family:Audiowide, Fantasy; font-weight: bold;">
+                        <span class="badge rounded-pill text-bg-info" style="padding-left:2rem; padding-right:2rem;
+                        padding-bottom:0.5rem; padding-top:0.5rem; font-family:Helvetica, 'Brush Script', Fantasy">
+                            {%if response['db']|length > 0 %} {{ response['selected_db_name'] }} {%else%} None {%endif%}
+                        </span>
+                </h3>
+
+
+        </div>
+
+    </div>
+
+
+    <!--  1. DATASETS INPUT FILE CARD  -->
+    <p></p>
+    <div class="card bg-light mb-3 border-primary sticky-top;" style="width: 100%;">
+
+        <!-- IMPORT DATASET FILES CARD Header -->
+        <form  action="uploader" method="POST" enctype = "multipart/form-data" style="width:100%;">
+            <div class="card-header" style="padding-bottom: 2rem; padding-top: 1rem;">
+            <div class="row" style="padding-left: 14px; padding-right: 14px;">
+
+                <div class="row-auto input-group" style="width:100%; padding-top: 0.1rem">
+
+                    <div class="col-auto" style="width:90%">
+                        <h2 class="card-title"> <a class="nav-link ">Datasets</a> </h2>
+                    </div>
+
+                    <div class="col-auto">
+
+                        <div class="col-auto" style="padding-top: 0.1rem ">
+                          <button class="btn btn-primary mb-3" type="submit" id="submit_db" name="submit_db"
+                          style="width:7.5rem;" onclick="clearBox('databases')">
+                              Upload
+                          </button>
+                        </div>
+
+                    </div>
+
+                </div>
+                <!-- HEADER -->
+
+                <!-- DATASET UPDATE FORMS -->
+
+
+                <!-- FILE BROWSER FOR THE CIVIL REGISTRIES DATASET -->
+                <div class="row-auto input-group" style="width:100%; padding-top: 0.1rem; text-align:center;">
+                    <input type="file" name="file1" class="form-control" id="inputGroupFile1"
+                       aria-describedby="inputGroupFileAddon04" aria-label="Upload">
+                    <span class="input-group-text text-center" id="basic-addon1"
+                          style="color:brown; width:9rem; text-align:center;">
+                        Registry
+                    </span>
+                </div>
+
+                <!-- FILE BROWSER FOR THE RECONSTITUTED DATASET -->
+                <div class="row-auto input-group" style="width:100%; padding-top: 0.1rem">
+                  <input type="file" name="file2" class="form-control" id="inputGroupFile2"
+                       aria-describedby="inputGroupFileAddon04" aria-label="Upload">
+                  <span class="input-group-text text-center" id="basic-addon2" style="color:brown; width:9rem">
+                      Reconstituted</span>
+                </div>
+
+                <!-- DATASET NAME AND UPLOAD BUTTON -->
+                  <div class="row-auto input-group" style="width:100%; padding-top: 0.1rem">
+                    <input type="text" class="form-control" placeholder="Database Name"
+                           id="db_name" name="db_name"
+                   aria-label="Username" aria-describedby="basic-addon1" >
+                </div>
+
+            </div>
+
+        </div>
+        </form>
+
+    </div>
+
+
+    <!--NEW CARD-->
+    <p></p>
+    <div class="row">
+
+      <div class="col-sm-6 mb-3 mb-sm-0">
+
+        {% if response['files']|length > 0 %}
+          <div class="card border-danger mb-3 h-100">
+
+          <!-- CARD BODY -->
+            <div class="card-body">
+              <div class="alert align-items-center alert-warning alert-dismissible fade show" role="alert">
+              Please be <strong>extra cautious</strong> not to unintentionally press the delete button.
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+
+              {% for row in response['files'] %}
+                {%- if loop.index is odd %}
+                    {% for col in row %}
+                        <form action="delete_db" method="POST" enctype = "multipart/form-data">
+                        <p>
+                            <!--DB NAME-->
+                            <h3 style="color: blue;" id="delete-db1">
+
+                                <div class="row">
+
+                                    <div class="col-auto">
+                                    <input type="text"  placeholder="{{ col.name }}" aria-label="{{ col.name }}"
+                                           style="width:15%" hidden=""  id="hidden_input1" name="hidden_input1"
+                                           value="{{ col.name }}">
+                                {{ col.name }}
+                                </div>
+
+                                    <div class="col-auto" style="padding-top:0.4rem;">
+
+                                        <button class="btn btn-sm btn-danger mb-3"
+                                          style="height: 1em; padding-bottom:1.3rem; padding-top:0rem; width:5rem;"
+                                          type="submit" id="btn-delete-db1" name="btn-delete-update" value="delete"
+                                          onclick="clearBox('databases', 'delete-db')"> Delete
+                                        </button>
+
+                                        <button class="btn btn-sm btn-success mb-3"
+                                          style="height: 1em; padding-bottom:1.3rem; padding-top:0rem; width:5rem;"
+                                          type="submit" id="btn-update-db-name" name="btn-delete-update" value="update"
+                                          onclick="clearBox('databases', 'delete-db')"> Edit
+
+                                            <div class="modal-dialog modal-sm">Update</div>
+
+                                        </button>
+
+                                </div>
+
+                                </div>
+
+                            </h3>
+
+                            <!-- DB INFO -->
+                            <span class="badge text-bg-light"2>
+                                - Civil Registry Path &nbsp; &nbsp;&nbsp;: {{ col.civil_registries_path }} </span> <br>
+                            <span class="badge text-bg-light">
+                                - Reconstituted Path &nbsp;&nbsp; &nbsp;&nbsp; : {{ col.reconstituted_path }} </span><br>
+                            <span class="badge text-bg-light">
+                                - Dataset Creation Date : {{ col.created }} </span> <br>
+
+                        </p>
+                        </form>
+                    {% endfor %}
+                {% endif %}
+              {% endfor %}
+          </div>
+          </div>
+
+        {% endif %}
+      </div>
+
+      <div class="col-sm-6 mb-3 mb-sm-0">
+          {% if response['files']|length > 0 %}
+              <div class="card border-danger h-100">
+              <div class="card-body">
+
+                  <div class="alert alert-warning align-items-center alert-dismissible fade show" role="alert">
+                  Please, be <strong>extra cautious</strong> not to unintentionally press the delete button.
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                    {% for row in response['files'] %}
+                    {%- if loop.index is even %}
+                        {% for col in row %}
+                            <form action="delete_db" method="POST" enctype = "multipart/form-data">
+                                <p>
+                                <!--DB NAME-->
+                                <h3 style="color: blue;" id="delete-db2">
+
+                                    <div class="row">
+
+                                        <div class="col-auto">
+                                            <input type="text"  placeholder="{{ col.name }}" aria-label="{{ col.name }}"
+                                                   style="width:15%" hidden=""  id="hidden_input2" name="hidden_input2"
+                                                   value="{{ col.name }}">
+                                            {{ col.name }}
+                                        </div>
+
+                                        <div class="col-auto" style="padding-top:0.4rem; padding-right:orem;">
+                                            <button class="btn btn-sm btn-danger mb-3"
+                                              style="height: 1em; padding-bottom:1.3rem; padding-top:0rem; width:5rem;"
+                                              type="submit" id="btn-delete-2" name="btn-delete-update" value="delete"
+                                              onclick="clearBox('databases', 'delete-db')"> Delete
+                                            </button>
+
+                                            <button class="btn btn-sm btn-success mb-3"
+                                              style="height: 1em; padding-bottom:1.3rem; padding-top:0rem; width:5rem;"
+                                              type="submit" id="btn-update-2" name="btn-delete-update" value="update">
+                                                Edit
+                                            </button>
+                                        </div>
+
+                                    </div>
+
+
+
+
+
+
+                                </h3>
+
+                                <!-- DB INFO -->
+                                <span class="badge text-bg-light">
+                                    - Civil Registry Path &nbsp; &nbsp;&nbsp;: {{ col.civil_registries_path }} </span> <br>
+                                <span class="badge text-bg-light">
+                                    - Reconstituted Path &nbsp;&nbsp; &nbsp;&nbsp; : {{ col.reconstituted_path }} </span><br>
+                                <span class="badge text-bg-light">
+                                    - Dataset Creation Date : {{ col.created }} </span>
+                                </p>
+                            </form>
+                        {% endfor %}
+                      {% endif %}
+                    {% endfor %}
+
+              </div>
+        </div>
+
+          {% endif %}
+      </div>
+
+    </div>
+    <p></p>
+
+    {% if task=="update" %}
+    <form action="delete_db" method="POST" enctype = "multipart/form-data">
+        <div class="row">
+
+            <div class="input-group mb-3 text-center item-center text-end" style="width:50%; text-align:right">
+                <span class="input-group-text" id="db-name-to-update">Database name to update</span>
+                <input type="text" class="form-control" placeholder="Database name" value="{{db_name}}"
+                       name="old-db-name" aria-label="Database name" aria-describedby="Database-name"
+                       style="text-align:center">
+            </div>
+
+            <div class="input-group mb-3 text-center item-center text-end" style="width:50%; text-align:right">
+
+                <span class="input-group-text" id="db-name-update">Update database name to</span>
+
+                <input type="text" class="form-control" placeholder="New database name"
+                       name="new-db-name" aria-label="New database name" aria-describedby="New database name"
+                       style="text-align:center" >
+
+                <button class="btn btn-primary" type="submit" name="btn-delete-update" value='update'>Save changes</button>
+
+            </div>
+
+        </div>
+    </form>
+    {% endif %}
+
+
+    <!-- Modal -->
+    <form action="delete_db" method="POST" enctype = "multipart/form-data">
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                ...
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-primary" name="btn-delete-update" value="update">
+                      Save changes
+                  </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+    </form>
+
+
+
+    <!-- THE END  -->
+    <p style="padding-top: 20px;"></p>
+
+
+    <!--script-->
+    <script>
+        function clearBox(elementID, link) {
+            document.getElementById(elementID).innerHTML = "PROCESSING...";
+        }
+
+        function myFunction() {
+          document.getElementById("demo").innerHTML = "Hello World";
+        }
+
+        const myModal = document.getElementById('myModal')
+        const myInput = document.getElementById('myInput')
+
+        myModal.addEventListener('shown.bs.modal', () => {
+          myInput.focus()
+        })
+    </script>
+
+
+{% endblock %}
+
+

@@ -1,0 +1,85 @@
+.result {
+    color:white ;
+    padding-left:1rem ;
+    padding-right:1rem ;
+    background-color: #757574;
+}
+
+.likely {
+    color:white ;
+    font-weight: bold;
+    padding-left:1rem ;
+    padding-right:1rem ;
+    background-color: #37AFA9 ;
+}
+
+.unlikely {
+    padding-left:1rem ;
+    padding-right:1rem ;
+    background-color: #B42F32 ;
+}
+
+.uncertain {
+    color: black ;
+    padding-left:1rem ;
+    padding-right:1rem ;
+    background-color:  #E1BE6A;
+}
+
+#40B0A6 #8B0000 #E1BE6A
+
+Uncertain: #DF6747
+
+
+
+
+h1 {
+    border: 0px #eee solid;
+    color: brown;
+    text-align: center;
+    padding: 10px;
+}
+
+h2 {
+    color: blue;
+}
+
+.h3 {
+    color: blue;
+}
+
+.container {
+  ...
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@each $breakpoint in map-keys($grid-breakpoints) {
+  $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
+  $postfix: if($infix != "", $infix + "-down", "");
+
+  @include media-breakpoint-down($breakpoint) {
+    .modal-fullscreen#{$postfix} {
+      width: 100vw;
+      max-width: none;
+      height: 100%;
+      margin: 0;
+
+      .modal-content {
+        height: 100%;
+        border: 0;
+        @include border-radius(0);
+      }
+
+      .modal-header,
+      .modal-footer {
+        @include border-radius(0);
+      }
+
+      .modal-body {
+        overflow-y: auto;
+      }
+    }
+  }
+}
