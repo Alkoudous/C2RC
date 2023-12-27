@@ -11,7 +11,7 @@
 > #### 2. Conda Package-Manager
 >	https://conda.io/projects/conda/en/latest/user-guide/getting-started.html
 >	
-> #### 3. Installing Pre-requisite Libraries
+> #### 3. Additional Libraries
 >	REQUIREMENTS		: pip install pipreqs
 >			          pipreqs /path/to/project
 >	FLASK			: pip install flask
