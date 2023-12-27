@@ -19,8 +19,8 @@
 	GRAPH-TOOL		: conda install -c conda-forge graph-tool
 	
 ### 3. C2RC Installation
-	 In Pycharm, create a new project "C2RC" using CONDA as your new environment. 
-	 Once created, add the src folder to the C2RC folder.
-   	 Open src/main.py in pycharm.
-   	 Right click it and run to get the server running.
-   	 The UI can then be found at http://127.0.0.1:5000.
+	 - In Pycharm, create a new project "C2RC" using CONDA as your new environment. 
+	 - Once created, add the src folder to the C2RC folder.
+   	 - Open src/main.py in pycharm.
+   	 - Right click it and run to get the server running.
+   	 - The UI can then be found at http://127.0.0.1:5000.
