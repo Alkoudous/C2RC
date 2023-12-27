@@ -2852,12 +2852,15 @@ def validation_consistency():
 
     week_date(message="validation consistency  ")
     selected_db_name = selected_db()
-    parameters = request.form.get('consistency-ID').split(" | ")
+    requested = request.form.get('consistency-ID')
+    consistency_id, current_role, main_cid, main_name = None, None, None, None
 
-    consistency_id = parameters[0]
-    current_role = parameters[1]
-    main_cid = parameters[2]
-    main_name = parameters[3]
+    if requested:
+        parameters = requested.split(" | ")
+        consistency_id = parameters[0]
+        current_role = parameters[1]
+        main_cid = parameters[2]
+        main_name = parameters[3]
 
     data = reconstituted_data(selected_db_name, cid=consistency_id)
 
