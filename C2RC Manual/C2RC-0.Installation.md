@@ -11,8 +11,8 @@
 	https://conda.io/projects/conda/en/latest/user-guide/getting-started.html
 	
 ### 3. Installing Pre-requisite Libraries
-	REQUIREMENTS	: pip install pipreqs
-					  pipreqs /path/to/project
+	REQUIREMENTS		: pip install pipreqs
+			          pipreqs /path/to/project
 	FLASK			: pip install flask
 	RDFLIB			: pip install rdflib
 	DATE UTIL		: pip install python_dateutil
