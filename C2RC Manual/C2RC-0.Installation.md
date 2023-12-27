@@ -13,8 +13,8 @@
 >	
 > #### 3. Additional Libraries
 >	REQUIREMENTS		: pip install pipreqs
->			          pipreqs /path/to/project
->	FLASK			: pip install flask
+			          pipreqs /path/to/project
+	FLASK			: pip install flask
 >	RDFLIB			: pip install rdflib
 >	DATE UTIL		: pip install python_dateutil
 >	GRAPH-TOOL		: conda install -c conda-forge graph-tool
