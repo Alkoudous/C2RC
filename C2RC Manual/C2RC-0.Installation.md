@@ -12,7 +12,7 @@
 >	https://conda.io/projects/conda/en/latest/user-guide/getting-started.html
 >	
 > #### 3. Additional Libraries
->	REQUIREMENTS		: pip install pipreqs
+	REQUIREMENTS		: pip install pipreqs
 			          pipreqs /path/to/project
 	FLASK			: pip install flask
 	RDFLIB			: pip install rdflib
