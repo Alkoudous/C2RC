@@ -3,14 +3,15 @@
 # <strong style="color:brown"> **INSTALLATION** </strong> 
 <!------------------------------------------------------------------------------------->
  	
- 	
-### 1. Pycharm IDE
+### Pre-requisites 
+
+> #### 1. Pycharm IDE
 	https://www.jetbrains.com/products/compare/?product=pycharm&product=pycharm-ce
 	
-### 2. Conda Package-Manager
+> #### 2. Conda Package-Manager
 	https://conda.io/projects/conda/en/latest/user-guide/getting-started.html
 	
-### 3. Installing Pre-requisite Libraries
+> #### 3. Installing Pre-requisite Libraries
 	REQUIREMENTS		: pip install pipreqs
 			          pipreqs /path/to/project
 	FLASK			: pip install flask
@@ -18,7 +19,7 @@
 	DATE UTIL		: pip install python_dateutil
 	GRAPH-TOOL		: conda install -c conda-forge graph-tool
 	
-### 3. C2RC Installation
+### C2RC Installation
 	 - In Pycharm, create a new project "C2RC" using CONDA as your new environment. 
 	 - Once created, add the src folder to the C2RC folder.
    	 - Open src/main.py in pycharm.
