@@ -1,6 +1,6 @@
 # C2RC
 
-The goal of the Civil Registry Reconstitutions Cleaner (C2RC) is to help assess the correctness of computed reconstitutions of individuals. 
+The goal of the Civil Registry Reconstitutions Cleaner (C2RC) is to help assess the correctness of computed reconstitutions of individuals. Developed by [@Alkoudous](https://github.com/Alkoudous) with support of NWO Grant [#184.034.023](https://www.nwo.nl/en/news/new-national-strategy-large-scale-research-infrastructure) the current version of C2RC is being developed and maintained by [CLARIAH](https://github.com/CLARIAH/C2RC).
 
 ## Description
 
